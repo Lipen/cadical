@@ -476,7 +476,9 @@ update:
 	\$(MAKE) -C "\$(CADICALBUILD)" update
 shared:
 	\$(MAKE) -C "\$(CADICALBUILD)" libcadical.so
-.PHONY: all cadical clean mobical test update shared
+dll:
+	\$(MAKE) -C "\$(CADICALBUILD)" cadical.dll
+.PHONY: all cadical clean mobical test update shared dll
 EOF
 
 msg "generated '../makefile' as proxy to ..."
