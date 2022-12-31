@@ -17,123 +17,123 @@ namespace CaDiCaL {
 // '1' as well as '2' both occur positively as well as negatively and none
 // of them nor their negation is considered as probe
 
-void Internal::mark_duplicated_binary_clauses_as_garbage () {
+void Internal::mark_duplicated_binary_clauses_as_garbage() {
+    if (!opts.deduplicate) return;
+    if (unsat) return;
+    if (terminated_asynchronously()) return;
 
-  if (!opts.deduplicate) return;
-  if (unsat) return;
-  if (terminated_asynchronously ()) return;
+    START_SIMPLIFIER(deduplicate, DEDUP);
+    stats.deduplications++;
 
-  START_SIMPLIFIER (deduplicate, DEDUP);
-  stats.deduplications++;
+    assert(!level);
+    assert(watching());
 
-  assert (!level);
-  assert (watching ());
+    vector<int> stack;  // To save marked literals and unmark them later.
 
-  vector<int> stack;    // To save marked literals and unmark them later.
+    int64_t subsumed = 0;
+    int64_t units = 0;
 
-  int64_t subsumed = 0;
-  int64_t units = 0;
+    for (auto idx : vars) {
+        if (unsat) break;
+        if (!active(idx)) continue;
+        int unit = 0;
 
-  for (auto idx : vars) {
+        for (int sign = -1; !unit && sign <= 1; sign += 2) {
+            const int lit = sign * idx;  // Consider all literals.
 
-    if (unsat) break;
-    if (!active (idx)) continue;
-    int unit = 0;
+            assert(stack.empty());
+            Watches& ws = watches(lit);
 
-    for (int sign = -1; !unit && sign <= 1; sign += 2) {
+            // We are removing references to garbage clause. Thus no 'auto'.
 
-      const int lit = sign * idx;       // Consider all literals.
+            const const_watch_iterator end = ws.end();
+            watch_iterator j = ws.begin();
+            const_watch_iterator i;
 
-      assert (stack.empty ());
-      Watches & ws = watches (lit);
+            for (i = j; !unit && i != end; i++) {
+                Watch w = *j++ = *i;
+                if (!w.binary()) continue;
+                int other = w.blit;
+                const int tmp = marked(other);
+                Clause* c = w.clause;
 
-      // We are removing references to garbage clause. Thus no 'auto'.
+                if (tmp > 0) {  // Found duplicated binary clause.
 
-      const const_watch_iterator end = ws.end ();
-      watch_iterator j = ws.begin ();
-      const_watch_iterator i;
+                    if (c->garbage) {
+                        j--;
+                        continue;
+                    }
+                    LOG(c, "found duplicated");
 
-      for (i = j; !unit && i != end; i++) {
-        Watch w = *j++ = *i;
-        if (!w.binary ()) continue;
-        int other = w.blit;
-        const int tmp = marked (other);
-        Clause * c = w.clause;
+                    // The previous identical clause 'd' might be redundant and if the
+                    // second clause 'c' is not (so irredundant), then we have to keep
+                    // 'c' instead of 'd', thus we search for it and replace it.
 
-        if (tmp > 0) {                  // Found duplicated binary clause.
+                    if (!c->redundant) {
+                        watch_iterator k;
+                        for (k = ws.begin();; k++) {
+                            assert(k != i);
+                            if (!k->binary()) continue;
+                            if (k->blit != other) continue;
+                            Clause* d = k->clause;
+                            if (d->garbage) continue;
+                            c = d;
+                            break;
+                        }
+                        *k = w;
+                    }
 
-          if (c->garbage) { j--; continue; }
-          LOG (c, "found duplicated");
+                    LOG(c, "mark garbage duplicated");
+                    stats.subsumed++;
+                    stats.deduplicated++;
+                    subsumed++;
+                    mark_garbage(c);
+                    j--;
 
-          // The previous identical clause 'd' might be redundant and if the
-          // second clause 'c' is not (so irredundant), then we have to keep
-          // 'c' instead of 'd', thus we search for it and replace it.
+                } else if (tmp < 0) {  // Hyper unary resolution.
 
-          if (!c->redundant) {
-            watch_iterator k;
-            for (k = ws.begin ();;k++) {
-              assert (k != i);
-              if (!k->binary ()) continue;
-              if (k->blit != other) continue;
-              Clause * d = k->clause;
-              if (d->garbage) continue;
-              c = d;
-              break;
+                    LOG("found %d %d and %d %d which produces unit %d",
+                        lit, -other, lit, other, lit);
+                    unit = lit;
+                    j = ws.begin();  // Flush 'ws'.
+                    units++;
+
+                } else {
+                    if (c->garbage) continue;
+                    mark(other);
+                    stack.push_back(other);
+                }
             }
-            *k = w;
-          }
 
-          LOG (c, "mark garbage duplicated");
-          stats.subsumed++;
-          stats.deduplicated++;
-          subsumed++;
-          mark_garbage (c);
-          j--;
+            if (j == ws.begin())
+                erase_vector(ws);
+            else if (j != end)
+                ws.resize(j - ws.begin());  // Shrink watchers.
 
-        } else if (tmp < 0) {           // Hyper unary resolution.
+            for (const auto& other : stack)
+                unmark(other);
 
-          LOG ("found %d %d and %d %d which produces unit %d",
-            lit, -other, lit, other, lit);
-          unit = lit;
-          j = ws.begin ();              // Flush 'ws'.
-          units++;
-
-        } else {
-          if (c->garbage) continue;
-          mark (other);
-          stack.push_back (other);
+            stack.clear();
         }
-      }
 
-      if (j == ws.begin ()) erase_vector (ws);
-      else if (j != end)
-        ws.resize (j - ws.begin ());    // Shrink watchers.
+        // Propagation potentially messes up the watches and thus we can not
+        // propagate the unit immediately after finding it.  Instead we break
+        // out of both loops and assign and propagate the unit here.
 
-      for (const auto & other : stack)
-        unmark (other);
+        if (unit) {
+            stats.failed++;
+            stats.hyperunary++;
+            assign_unit(unit);
 
-      stack.clear ();
+            if (!propagate()) {
+                LOG("empty clause after propagating unit");
+                learn_empty_clause();
+            }
+        }
     }
+    STOP_SIMPLIFIER(deduplicate, DEDUP);
 
-    // Propagation potentially messes up the watches and thus we can not
-    // propagate the unit immediately after finding it.  Instead we break
-    // out of both loops and assign and propagate the unit here.
-
-    if (unit) {
-
-      stats.failed++;
-      stats.hyperunary++;
-      assign_unit (unit);
-
-      if (!propagate ()) {
-        LOG ("empty clause after propagating unit");
-        learn_empty_clause ();
-      }
-    }
-  }
-  STOP_SIMPLIFIER (deduplicate, DEDUP);
-
-  report ('2', !opts.reportall && !(subsumed + units));
+    report('2', !opts.reportall && !(subsumed + units));
 }
 
-}
+}  // namespace CaDiCaL

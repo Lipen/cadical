@@ -18,30 +18,26 @@ struct Clause;
 struct Internal;
 
 class Instantiator {
+    friend struct Internal;
 
-  friend struct Internal;
+    struct Candidate {
+        int lit;
+        int size;
+        size_t negoccs;
+        Clause* clause;
+        Candidate(int l, Clause* c, int s, size_t n) : lit(l), size(s), negoccs(n), clause(c) {}
+    };
 
-  struct Candidate {
-    int lit;
-    int size;
-    size_t negoccs;
-    Clause * clause;
-    Candidate (int l, Clause * c, int s, size_t n) :
-      lit (l), size (s), negoccs (n), clause (c)
-    { }
-  };
+    vector<Candidate> candidates;
 
-  vector<Candidate> candidates;
+   public:
+    void candidate(int l, Clause* c, int s, size_t n) {
+        candidates.push_back(Candidate(l, c, s, n));
+    }
 
-public:
-
-  void candidate (int l, Clause * c, int s, size_t n) {
-    candidates.push_back (Candidate (l, c, s, n));
-  }
-
-  operator bool () const { return !candidates.empty (); }
+    operator bool() const { return !candidates.empty(); }
 };
 
-}
+}  // namespace CaDiCaL
 
 #endif

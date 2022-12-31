@@ -58,7 +58,8 @@ bool Internal::restarting () {
   if (stats.conflicts <= lim.restart) return false;
   double f = averages.current.glue.fast;
   double margin = (100.0 + opts.restartmargin)/100.0;
-  double s = averages.current.glue.slow, l = margin * s;
+  double s = averages.current.glue.slow;
+  double l = margin * s;
   LOG ("EMA glue slow %.2f fast %.2f limit %.2f", s, f, l);
   return l <= f;
 }

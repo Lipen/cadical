@@ -54,50 +54,50 @@ namespace CaDiCaL {
 struct Internal;
 
 class Arena {
+    Internal *internal;
 
-  Internal * internal;
+    struct {
+        char *start, *top, *end;
+    } from, to;
 
-  struct { char * start, * top, * end; } from, to;
+   public:
+    Arena(Internal *);
+    ~Arena();
 
-public:
+    // Prepare 'to' space to hold that amount of memory.  Precondition is that
+    // the 'to' space is empty.  The following sequence of 'copy' operations
+    // can use as much memory in sum as pre-allocated here.
+    //
+    void prepare(size_t bytes);
 
-  Arena (Internal *);
-  ~Arena ();
+    // Does the memory pointed to by 'p' belong to this arena? More precisely
+    // to the 'from' space, since that is the only one remaining after 'swap'.
+    //
+    bool contains(void *p) const {
+        char *c = (char *)p;
+        return from.start <= c && c < from.top;
+    }
 
-  // Prepare 'to' space to hold that amount of memory.  Precondition is that
-  // the 'to' space is empty.  The following sequence of 'copy' operations
-  // can use as much memory in sum as pre-allocated here.
-  //
-  void prepare (size_t bytes);
+    // Allocate that amount of memory in 'to' space.  This assumes the 'to'
+    // space has been prepared to hold enough memory with 'prepare'.  Then
+    // copy the memory pointed to by 'p' of size 'bytes'.  Note that it does
+    // not matter whether 'p' is in 'from' or allocated outside of the arena.
+    //
+    char *copy(const char *p, size_t bytes) {
+        char *res = to.top;
+        to.top += bytes;
+        assert(to.top <= to.end);
+        memcpy(res, p, bytes);
+        return res;
+    }
 
-  // Does the memory pointed to by 'p' belong to this arena? More precisely
-  // to the 'from' space, since that is the only one remaining after 'swap'.
-  //
-  bool contains (void * p) const {
-    char * c = (char *) p;
-    return from.start <= c && c < from.top;
-  }
-
-  // Allocate that amount of memory in 'to' space.  This assumes the 'to'
-  // space has been prepared to hold enough memory with 'prepare'.  Then
-  // copy the memory pointed to by 'p' of size 'bytes'.  Note that it does
-  // not matter whether 'p' is in 'from' or allocated outside of the arena.
-  //
-  char * copy (const char * p, size_t bytes) {
-    char * res = to.top;
-    to.top += bytes;
-    assert (to.top <= to.end);
-    memcpy (res, p, bytes);
-    return res;
-  }
-
-  // Completely delete 'from' space and then replace 'from' by 'to' (by
-  // pointer swapping).  Everything previously allocated (in 'from') and not
-  // explicitly copied to 'to' with 'copy' becomes invalid.
-  //
-  void swap ();
+    // Completely delete 'from' space and then replace 'from' by 'to' (by
+    // pointer swapping).  Everything previously allocated (in 'from') and not
+    // explicitly copied to 'to' with 'copy' becomes invalid.
+    //
+    void swap();
 };
 
-}
+}  // namespace CaDiCaL
 
 #endif

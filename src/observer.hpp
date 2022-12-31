@@ -6,28 +6,26 @@ namespace CaDiCaL {
 // Proof observer class used to act on added, derived or deleted clauses.
 
 class Observer {
+   public:
+    Observer() {}
+    virtual ~Observer() {}
 
-public:
+    // An online proof 'Checker' needs to know original clauses too while a
+    // proof 'Tracer' will not implement this function.
+    //
+    virtual void add_original_clause(const vector<int> &) {}
 
-  Observer () { }
-  virtual ~Observer () { }
+    // Notify the observer that a new clause has been derived.
+    //
+    virtual void add_derived_clause(const vector<int> &) {}
 
-  // An online proof 'Checker' needs to know original clauses too while a
-  // proof 'Tracer' will not implement this function.
-  //
-  virtual void add_original_clause (const vector<int> &) { }
+    // Notify the observer that a clause is not used anymore.
+    //
+    virtual void delete_clause(const vector<int> &) {}
 
-  // Notify the observer that a new clause has been derived.
-  //
-  virtual void add_derived_clause (const vector<int> &) { }
-
-  // Notify the observer that a clause is not used anymore.
-  //
-  virtual void delete_clause (const vector<int> &) { }
-
-  virtual void flush () { }
+    virtual void flush() {}
 };
 
-}
+}  // namespace CaDiCaL
 
 #endif
