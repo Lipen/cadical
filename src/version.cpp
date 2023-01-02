@@ -85,6 +85,7 @@ static const char* COPYRIGHT =
 
 namespace CaDiCaL {
 
+extern "C" {
 const char* version() { return VERSION; }
 const char* copyright() { return COPYRIGHT; }
 const char* signature() { return "cadical-" VERSION; }
@@ -92,5 +93,6 @@ const char* identifier() { return IDENTIFIER; }
 const char* compiler() { return COMPILER; }
 const char* date() { return DATE; }
 const char* flags() { return FLAGS; }
+}
 
 }  // namespace CaDiCaL
