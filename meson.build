@@ -1,6 +1,18 @@
 project('cadical', 'cpp',
-  version : '1.5.2',
+  version : files('VERSION'),
   default_options : ['warning_level=3'])
+
+compiler = meson.get_compiler('cpp')
+
+config = configuration_data()
+config.set_quoted('COMPILER', '@0@-@1@'.format(compiler.get_id(), compiler.version()))
+git_id = run_command('git', 'rev-parse', 'HEAD')
+if git_id.returncode() == 0
+  config.set_quoted('IDENTIFIER', git_id.stdout().strip())
+endif
+config.set_quoted('VERSION', meson.project_version())
+configure_file(output : 'build.hpp',
+  configuration : config)
 
 src = [
   'src/analyze.cpp',
@@ -79,13 +91,6 @@ src = [
   'src/watch.cpp',
 ]
 
-# Generate 'build.hpp' using script:
-build_hpp = custom_target(
-  output : 'build.hpp',
-  command : 'scripts/make-build-header.sh',
-  capture : true,
-)
-
 if get_option('buildtype').startswith('release')
     add_project_arguments('-DNDEBUG', language : 'cpp')
 endif
@@ -105,28 +110,25 @@ int main () {
   return 0;
 }
 '''
-compiler = meson.get_compiler('cpp')
 result = compiler.run(code, name : 'unlocked io')
 if result.compiled() and result.returncode() == 0
-  # OK, no need to define `-DNUNLOCKED`
+  # OK, no need to define anything
 else
   add_project_arguments('-DNUNLOCKED', language : 'cpp')
 endif
 
-link_args = []
-# Link 'psapi' on Windows:
-if host_machine.system() == 'windows'
-  link_args += '-lpsapi'
-endif
-lib = library('cadical', src, build_hpp,
-  install : true, link_args : link_args)
+# Add 'psapi' dependency on Windows
+psapi_dep = compiler.find_library('psapi', required : host_machine.system() == 'windows')
 
-exe_cadical = executable('cadical', 'src/cadical.cpp', build_hpp,
+lib = library('cadical', src,
+  install : true, dependencies : psapi_dep)
+
+exe_cadical = executable('cadical', 'src/cadical.cpp',
   install : true, link_with : lib)
 
 # Exclude 'mobical' on Windows:
 if host_machine.system() != 'windows'
-exe_mobical = executable('mobical', 'src/mobical.cpp', build_hpp,
+exe_mobical = executable('mobical', 'src/mobical.cpp',
   install : true, link_with : lib)
 endif
 
