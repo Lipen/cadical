@@ -5,7 +5,7 @@
 
 namespace CaDiCaL {
 
-struct Wrapper : Learner, Terminator {
+struct CCaDiCaL : Learner, Terminator {
     Solver *solver;
     struct {
         void *state;
@@ -35,8 +35,7 @@ struct Wrapper : Learner, Terminator {
         if (learner.end_clause == learner.capacity_clause) {
             size_t count = learner.end_clause - learner.begin_clause;
             size_t size = count ? 2 * count : 1;
-            learner.begin_clause = (int *)
-                realloc(learner.begin_clause, size * sizeof(int));
+            learner.begin_clause = (int *)realloc(learner.begin_clause, size * sizeof(int));
             learner.end_clause = learner.begin_clause + count;
             learner.capacity_clause = learner.begin_clause + size;
         }
@@ -47,12 +46,12 @@ struct Wrapper : Learner, Terminator {
         learner.end_clause = learner.begin_clause;
     }
 
-    Wrapper() : solver(new Solver()) {
+    CCaDiCaL() : solver(new Solver()) {
         memset(&terminator, 0, sizeof terminator);
         memset(&learner, 0, sizeof learner);
     }
 
-    ~Wrapper() {
+    ~CCaDiCaL() {
         terminator.function = 0;
         if (learner.begin_clause) free(learner.begin_clause);
         delete solver;
@@ -72,128 +71,123 @@ const char *ccadical_signature(void) {
 }
 
 CCaDiCaL *ccadical_init(void) {
-    return (CCaDiCaL *)new Wrapper();
+    return new CCaDiCaL();
 }
 
-void ccadical_release(CCaDiCaL *wrapper) {
-    delete (Wrapper *)wrapper;
+void ccadical_release(CCaDiCaL *ptr) {
+    delete ptr;
 }
 
-void ccadical_constrain(CCaDiCaL *wrapper, int lit) {
-    ((Wrapper *)wrapper)->solver->constrain(lit);
+void ccadical_constrain(CCaDiCaL *ptr, int lit) {
+    ptr->solver->constrain(lit);
 }
 
-int ccadical_constraint_failed(CCaDiCaL *wrapper) {
-    return ((Wrapper *)wrapper)->solver->constraint_failed();
+int ccadical_constraint_failed(CCaDiCaL *ptr) {
+    return ptr->solver->constraint_failed();
 }
 
-void ccadical_set_option(CCaDiCaL *wrapper,
+void ccadical_set_option(CCaDiCaL *ptr,
                          const char *name, int val) {
-    ((Wrapper *)wrapper)->solver->set(name, val);
+    ptr->solver->set(name, val);
 }
 
-void ccadical_limit(CCaDiCaL *wrapper,
+void ccadical_limit(CCaDiCaL *ptr,
                     const char *name, int val) {
-    ((Wrapper *)wrapper)->solver->limit(name, val);
+    ptr->solver->limit(name, val);
 }
 
-int ccadical_get_option(CCaDiCaL *wrapper, const char *name) {
-    return ((Wrapper *)wrapper)->solver->get(name);
+int ccadical_get_option(CCaDiCaL *ptr, const char *name) {
+    return ptr->solver->get(name);
 }
 
-void ccadical_add(CCaDiCaL *wrapper, int lit) {
-    ((Wrapper *)wrapper)->solver->add(lit);
+void ccadical_add(CCaDiCaL *ptr, int lit) {
+    ptr->solver->add(lit);
 }
 
-void ccadical_assume(CCaDiCaL *wrapper, int lit) {
-    ((Wrapper *)wrapper)->solver->assume(lit);
+void ccadical_assume(CCaDiCaL *ptr, int lit) {
+    ptr->solver->assume(lit);
 }
 
-int ccadical_solve(CCaDiCaL *wrapper) {
-    return ((Wrapper *)wrapper)->solver->solve();
+int ccadical_solve(CCaDiCaL *ptr) {
+    return ptr->solver->solve();
 }
 
-int ccadical_simplify(CCaDiCaL *wrapper) {
-    return ((Wrapper *)wrapper)->solver->simplify();
+int ccadical_simplify(CCaDiCaL *ptr) {
+    return ptr->solver->simplify();
 }
 
-int ccadical_val(CCaDiCaL *wrapper, int lit) {
-    return ((Wrapper *)wrapper)->solver->val(lit);
+int ccadical_val(CCaDiCaL *ptr, int lit) {
+    return ptr->solver->val(lit);
 }
 
-int ccadical_failed(CCaDiCaL *wrapper, int lit) {
-    return ((Wrapper *)wrapper)->solver->failed(lit);
+int ccadical_failed(CCaDiCaL *ptr, int lit) {
+    return ptr->solver->failed(lit);
 }
 
-void ccadical_print_statistics(CCaDiCaL *wrapper) {
-    ((Wrapper *)wrapper)->solver->statistics();
+void ccadical_print_statistics(CCaDiCaL *ptr) {
+    ptr->solver->statistics();
 }
 
-void ccadical_terminate(CCaDiCaL *wrapper) {
-    ((Wrapper *)wrapper)->solver->terminate();
+void ccadical_terminate(CCaDiCaL *ptr) {
+    ptr->solver->terminate();
 }
 
-int64_t ccadical_active(CCaDiCaL *wrapper) {
-    return ((Wrapper *)wrapper)->solver->active();
+int64_t ccadical_active(CCaDiCaL *ptr) {
+    return ptr->solver->active();
 }
 
-int64_t ccadical_irredundant(CCaDiCaL *wrapper) {
-    return ((Wrapper *)wrapper)->solver->irredundant();
+int64_t ccadical_irredundant(CCaDiCaL *ptr) {
+    return ptr->solver->irredundant();
 }
 
-int64_t ccadical_conflicts(CCaDiCaL *wrapper) {
-    return ((Wrapper *)wrapper)->solver->conflicts();
+int64_t ccadical_conflicts(CCaDiCaL *ptr) {
+    return ptr->solver->conflicts();
 }
 
-int64_t ccadical_decisions(CCaDiCaL *wrapper) {
-    return ((Wrapper *)wrapper)->solver->decisions();
+int64_t ccadical_decisions(CCaDiCaL *ptr) {
+    return ptr->solver->decisions();
 }
 
-int64_t ccadical_restarts(CCaDiCaL *wrapper) {
-    return ((Wrapper *)wrapper)->solver->restarts();
+int64_t ccadical_restarts(CCaDiCaL *ptr) {
+    return ptr->solver->restarts();
 }
 
-int64_t ccadical_propagations(CCaDiCaL *wrapper) {
-    return ((Wrapper *)wrapper)->solver->propagations();
+int64_t ccadical_propagations(CCaDiCaL *ptr) {
+    return ptr->solver->propagations();
 }
 
-int ccadical_fixed(CCaDiCaL *wrapper, int lit) {
-    return ((Wrapper *)wrapper)->solver->fixed(lit);
+int ccadical_fixed(CCaDiCaL *ptr, int lit) {
+    return ptr->solver->fixed(lit);
 }
 
-void ccadical_set_terminate(CCaDiCaL *ptr,
-                            void *state, int (*terminate)(void *)) {
-    Wrapper *wrapper = (Wrapper *)ptr;
-    wrapper->terminator.state = state;
-    wrapper->terminator.function = terminate;
+void ccadical_set_terminate(CCaDiCaL *ptr, void *state, int (*terminate)(void *)) {
+    ptr->terminator.state = state;
+    ptr->terminator.function = terminate;
     if (terminate)
-        wrapper->solver->connect_terminator(wrapper);
+        ptr->solver->connect_terminator(ptr);
     else
-        wrapper->solver->disconnect_terminator();
+        ptr->solver->disconnect_terminator();
 }
 
-void ccadical_set_learn(CCaDiCaL *ptr,
-                        void *state, int max_length,
-                        void (*learn)(void *state, int *clause)) {
-    Wrapper *wrapper = (Wrapper *)ptr;
-    wrapper->learner.state = state;
-    wrapper->learner.max_length = max_length;
-    wrapper->learner.function = learn;
+void ccadical_set_learn(CCaDiCaL *ptr, void *state, int max_length, void (*learn)(void *state, int *clause)) {
+    ptr->learner.state = state;
+    ptr->learner.max_length = max_length;
+    ptr->learner.function = learn;
     if (learn)
-        wrapper->solver->connect_learner(wrapper);
+        ptr->solver->connect_learner(ptr);
     else
-        wrapper->solver->disconnect_learner();
+        ptr->solver->disconnect_learner();
 }
 
 void ccadical_freeze(CCaDiCaL *ptr, int lit) {
-    ((Wrapper *)ptr)->solver->freeze(lit);
+    ptr->solver->freeze(lit);
 }
 
 void ccadical_melt(CCaDiCaL *ptr, int lit) {
-    ((Wrapper *)ptr)->solver->melt(lit);
+    ptr->solver->melt(lit);
 }
 
 int ccadical_frozen(CCaDiCaL *ptr, int lit) {
-    return ((Wrapper *)ptr)->solver->frozen(lit);
+    return ptr->solver->frozen(lit);
 }
 }
