@@ -108,7 +108,7 @@ int main () {
 compiler = meson.get_compiler('cpp')
 result = compiler.run(code, name : 'unlocked io')
 if result.compiled() and result.returncode() == 0
-  add_project_arguments('-DUNLOCKED', language : 'cpp')
+  # OK, no need to define `-DNUNLOCKED`
 else
   add_project_arguments('-DNUNLOCKED', language : 'cpp')
 endif
