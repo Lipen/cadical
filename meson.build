@@ -6,7 +6,7 @@ compiler = meson.get_compiler('cpp')
 
 config = configuration_data()
 config.set_quoted('COMPILER', '@0@-@1@'.format(compiler.get_id(), compiler.version()))
-git_id = run_command('git', 'rev-parse', 'HEAD')
+git_id = run_command('git', 'rev-parse', 'HEAD', check : false)
 if git_id.returncode() == 0
   config.set_quoted('IDENTIFIER', git_id.stdout().strip())
 endif
