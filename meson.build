@@ -1,6 +1,6 @@
 project('cadical', 'cpp',
   version : files('VERSION'),
-  default_options : ['warning_level=3'])
+  default_options : ['cpp_std=c++11'])
 
 compiler = meson.get_compiler('cpp')
 
