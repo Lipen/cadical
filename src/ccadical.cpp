@@ -127,6 +127,10 @@ void ccadical_terminate (CCaDiCaL *wrapper) {
   ((Wrapper *) wrapper)->solver->terminate ();
 }
 
+int64_t ccadical_vars (CCaDiCaL *wrapper) {
+  return ((Wrapper *) wrapper)->solver->vars ();
+}
+
 int64_t ccadical_active (CCaDiCaL *wrapper) {
   return ((Wrapper *) wrapper)->solver->active ();
 }
