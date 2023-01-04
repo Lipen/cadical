@@ -39,6 +39,7 @@ int ccadical_get_option(CCaDiCaL *, const char *name);
 
 void ccadical_limit(CCaDiCaL *, const char *name, int limit);
 void ccadical_print_statistics(CCaDiCaL *);
+void ccadical_write_dimacs(CCaDiCaL *, const char *path);
 
 int ccadical_vars(CCaDiCaL *);
 int ccadical_active(CCaDiCaL *);

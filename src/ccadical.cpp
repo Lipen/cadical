@@ -194,4 +194,8 @@ void ccadical_melt(CCaDiCaL *ptr, int lit) {
 int ccadical_frozen(CCaDiCaL *ptr, int lit) {
     return ptr->solver->frozen(lit);
 }
+
+void ccadical_write_dimacs(CCaDiCaL *ptr, const char *path) {
+    ptr->solver->write_dimacs(path);
+}
 }
