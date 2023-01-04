@@ -33,22 +33,27 @@ void ccadical_set_learn(CCaDiCaL *, void *state, int max_length, void (*learn)(v
 
 void ccadical_constrain(CCaDiCaL *, int lit);
 int ccadical_constraint_failed(CCaDiCaL *);
+
 void ccadical_set_option(CCaDiCaL *, const char *name, int val);
-void ccadical_limit(CCaDiCaL *, const char *name, int limit);
 int ccadical_get_option(CCaDiCaL *, const char *name);
+
+void ccadical_limit(CCaDiCaL *, const char *name, int limit);
 void ccadical_print_statistics(CCaDiCaL *);
-int64_t ccadical_active(CCaDiCaL *);
+
+int ccadical_vars(CCaDiCaL *);
+int ccadical_active(CCaDiCaL *);
 int64_t ccadical_irredundant(CCaDiCaL *);
 int64_t ccadical_conflicts(CCaDiCaL *);
 int64_t ccadical_decisions(CCaDiCaL *);
 int64_t ccadical_restarts(CCaDiCaL *);
 int64_t ccadical_propagations(CCaDiCaL *);
+
 int ccadical_fixed(CCaDiCaL *, int lit);
-void ccadical_terminate(CCaDiCaL *);
-void ccadical_freeze(CCaDiCaL *, int lit);
 int ccadical_frozen(CCaDiCaL *, int lit);
+void ccadical_freeze(CCaDiCaL *, int lit);
 void ccadical_melt(CCaDiCaL *, int lit);
 int ccadical_simplify(CCaDiCaL *);
+void ccadical_terminate(CCaDiCaL *);
 
 /*------------------------------------------------------------------------*/
 

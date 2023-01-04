@@ -132,7 +132,11 @@ void ccadical_terminate(CCaDiCaL *ptr) {
     ptr->solver->terminate();
 }
 
-int64_t ccadical_active(CCaDiCaL *ptr) {
+int ccadical_vars(CCaDiCaL *ptr) {
+    return ptr->solver->vars();
+}
+
+int ccadical_active(CCaDiCaL *ptr) {
     return ptr->solver->active();
 }
 
