@@ -117,6 +117,8 @@ else
   add_project_arguments('-DNUNLOCKED', language : 'cpp')
 endif
 
+add_project_arguments('-fPIC', language : 'cpp')
+
 # Add 'psapi' dependency on Windows
 psapi_dep = compiler.find_library('psapi', required : host_machine.system() == 'windows')
 
