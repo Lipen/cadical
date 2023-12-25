@@ -49,6 +49,9 @@ mobical: mobical.o libcadical.a makefile $(LIBS)
 libcadical.a: $(OBJ) makefile
 	ar rc $@ $(OBJ)
 
+libcadical.so: $(OBJ) makefile
+	$(COMPILE) -shared -o $@ $(OBJ)
+
 #--------------------------------------------------------------------------#
 
 # Note that 'build.hpp' is generated and resides in the build directory.
