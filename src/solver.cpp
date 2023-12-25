@@ -972,6 +972,44 @@ int64_t Solver::irredundant () const {
   return res;
 }
 
+int64_t Solver::conflicts () const {
+  TRACE ("conflicts");
+  REQUIRE_VALID_STATE ();
+  int64_t res = internal->stats.conflicts;
+  LOG_API_CALL_RETURNS ("conflicts", res);
+  return res;
+}
+
+int64_t Solver::decisions () const {
+  TRACE ("decisions");
+  REQUIRE_VALID_STATE ();
+  int64_t res = internal->stats.decisions;
+  LOG_API_CALL_RETURNS ("decisions", res);
+  return res;
+}
+
+int64_t Solver::restarts () const {
+  TRACE ("restarts");
+  REQUIRE_VALID_STATE ();
+  int64_t res = internal->stats.restarts;
+  LOG_API_CALL_RETURNS ("restarts", res);
+  return res;
+}
+
+int64_t Solver::propagations () const {
+  TRACE ("propagations");
+  REQUIRE_VALID_STATE ();
+  int64_t res = 0;
+  res += internal->stats.propagations.cover;
+  res += internal->stats.propagations.probe;
+  res += internal->stats.propagations.search;
+  res += internal->stats.propagations.transred;
+  res += internal->stats.propagations.vivify;
+  res += internal->stats.propagations.walk;
+  LOG_API_CALL_RETURNS ("propagations", res);
+  return res;
+}
+
 /*------------------------------------------------------------------------*/
 
 void Solver::freeze (int lit) {

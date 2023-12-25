@@ -650,6 +650,11 @@ public:
   int64_t redundant () const;   // Number of active redundant clauses.
   int64_t irredundant () const; // Number of active irredundant clauses.
 
+  int64_t conflicts () const;   // Number of conflicts.
+  int64_t decisions () const;   // Number of decisions.
+  int64_t restarts () const;    // Number of restarts.
+  int64_t propagations () const;// Number of propagations.
+
   //------------------------------------------------------------------------
   // This function executes the given number of preprocessing rounds. It is
   // similar to 'solve' with 'limits ("preprocessing", rounds)' except that

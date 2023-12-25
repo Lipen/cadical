@@ -135,8 +135,24 @@ int64_t ccadical_irredundant (CCaDiCaL *wrapper) {
   return ((Wrapper *) wrapper)->solver->irredundant ();
 }
 
+int64_t ccadical_conflicts (CCaDiCaL *wrapper) {
+  return ((Wrapper*) wrapper)->solver->conflicts ();
+}
+
+int64_t ccadical_decisions (CCaDiCaL *wrapper) {
+  return ((Wrapper*) wrapper)->solver->decisions ();
+}
+
+int64_t ccadical_restarts (CCaDiCaL *wrapper) {
+  return ((Wrapper*) wrapper)->solver->restarts ();
+}
+
+int64_t ccadical_propagations (CCaDiCaL *wrapper) {
+  return ((Wrapper*) wrapper)->solver->propagations ();
+}
+
 int ccadical_fixed (CCaDiCaL *wrapper, int lit) {
-  return ((Wrapper *) wrapper)->solver->fixed (lit);
+  return ((Wrapper*) wrapper)->solver->fixed (lit);
 }
 
 void ccadical_set_terminate (CCaDiCaL *ptr, void *state,
