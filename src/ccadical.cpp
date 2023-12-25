@@ -205,4 +205,9 @@ void ccadical_close_proof (CCaDiCaL *ptr) {
 void ccadical_conclude (CCaDiCaL *ptr) {
   ((Wrapper *) ptr)->solver->conclude ();
 }
+
+void ccadical_write_dimacs(CCaDiCaL *ptr, const char *path) {
+  ((Wrapper *) ptr)->solver->write_dimacs(path);
+}
+
 }

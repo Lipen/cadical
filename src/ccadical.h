@@ -56,6 +56,7 @@ void ccadical_freeze (CCaDiCaL *, int lit);
 int ccadical_frozen (CCaDiCaL *, int lit);
 void ccadical_melt (CCaDiCaL *, int lit);
 int ccadical_simplify (CCaDiCaL *);
+void ccadical_write_dimacs (CCaDiCaL *, const char *);
 
 /*------------------------------------------------------------------------*/
 
