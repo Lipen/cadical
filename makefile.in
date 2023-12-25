@@ -52,6 +52,9 @@ libcadical.a: $(OBJ) makefile
 libcadical.so: $(OBJ) makefile
 	$(COMPILE) -shared -o $@ $(OBJ)
 
+cadical.dll: $(OBJ) makefile
+	$(COMPILE) -shared -o $@ $(OBJ) -lpsapi
+
 #--------------------------------------------------------------------------#
 
 # Note that 'build.hpp' is generated and resides in the build directory.
