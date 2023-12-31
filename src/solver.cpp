@@ -1666,4 +1666,8 @@ void Solver::error (const char *fmt, ...) {
   va_end (ap);
 }
 
+uint64_t Solver::propcheck_all_tree (const std::vector<int> &variables, uint64_t limit) {
+    return internal->propcheck_all_tree(variables, limit);
+}
+
 } // namespace CaDiCaL

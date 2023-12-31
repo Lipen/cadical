@@ -228,6 +228,8 @@ public:
 
   static const char *signature (); // name of this library
 
+  uint64_t propcheck_all_tree (const std::vector<int> &variables, uint64_t limit);
+
   // Core functionality as in the IPASIR incremental SAT solver interface.
   // (recall 'READY = CONFIGURING | STEADY  | SATISFIED | UNSATISFIED').
   // Further note that 'lit' is required to be different from 'INT_MIN' and

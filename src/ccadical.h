@@ -58,6 +58,10 @@ void ccadical_melt (CCaDiCaL *, int lit);
 int ccadical_simplify (CCaDiCaL *);
 void ccadical_write_dimacs (CCaDiCaL *, const char *);
 
+void ccadical_propcheck_tree_begin (CCaDiCaL *);
+void ccadical_propcheck_tree_add_variable (CCaDiCaL *, int v);
+uint64_t ccadical_propcheck_tree (CCaDiCaL *, uint64_t limit);
+
 /*------------------------------------------------------------------------*/
 
 // Support legacy names used before moving to more IPASIR conforming names.

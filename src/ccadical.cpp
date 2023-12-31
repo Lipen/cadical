@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <vector>
 
 namespace CaDiCaL {
 
@@ -59,6 +60,8 @@ struct Wrapper : Learner, Terminator {
       free (learner.begin_clause);
     delete solver;
   }
+
+  std::vector<int> variables;
 };
 
 } // namespace CaDiCaL
@@ -207,7 +210,22 @@ void ccadical_conclude (CCaDiCaL *ptr) {
 }
 
 void ccadical_write_dimacs(CCaDiCaL *ptr, const char *path) {
-  ((Wrapper *) ptr)->solver->write_dimacs(path);
+  ((Wrapper *) ptr)->solver->write_dimacs (path);
+}
+
+void ccadical_propcheck_tree_begin (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  wrapper->variables.clear();
+}
+
+void ccadical_propcheck_tree_add_variable (CCaDiCaL *ptr, int v){
+  Wrapper *wrapper = (Wrapper *) ptr;
+  wrapper->variables.push_back(v);
+}
+
+uint64_t ccadical_propcheck_tree (CCaDiCaL *ptr, uint64_t limit) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->solver->propcheck_all_tree (wrapper->variables, limit);
 }
 
 }
