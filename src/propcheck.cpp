@@ -24,11 +24,11 @@ uint64_t Internal::propcheck_all_tree (const vector<int>& variables, uint64_t li
     int state = 0; // state = Descending
 
     while (1) {
-        assert(level <= variables.size());
+        assert(level <= (int)variables.size());
         // std::cout << "state = " << state << ", level = " << level << std::endl;
 
         if (state == 0) { // Descending
-            if (level == variables.size()) {
+            if (level == (int)variables.size()) {
                 total++;
                 if (limit && total > limit) {
                     // std::cout << "reached the limit: " << total << " > " << limit << std::endl;
@@ -67,8 +67,8 @@ uint64_t Internal::propcheck_all_tree (const vector<int>& variables, uint64_t li
         } else if (state == 1) { // Ascending
             assert(level > 0);
 
-            // Find the last "0":
-            int i = level;  // 1-based index
+            // Find the last "false":
+            size_t i = level;  // 1-based index
             while (i > 0 && cube[i - 1] > 0) {
                 i--;
             }
@@ -81,7 +81,7 @@ uint64_t Internal::propcheck_all_tree (const vector<int>& variables, uint64_t li
             // Increment the cube:
             assert(cube[i - 1] == -1);
             cube[i - 1] = 1;
-            for (int j = i; j < variables.size(); j++) {
+            for (size_t j = i; j < variables.size(); j++) {
                 cube[j] = -1;
             }
 
