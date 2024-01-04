@@ -1751,8 +1751,8 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
             if (internal->level == (int)variables.size()) {
                 total++;
                 if (verb) std::cout << "total++ = " << total << std::endl;
-                if (limit && total > limit) {
-                    if (verb) std::cout << "reached the limit: " << total << " > " << limit << std::endl;
+                if (limit && total >= limit) {
+                    if (verb) std::cout << "reached the limit: " << total << " >= " << limit << std::endl;
                     break;
                 }
                 state = 1; // state = Ascending
