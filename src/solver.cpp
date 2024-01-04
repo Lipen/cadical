@@ -1779,7 +1779,7 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
             }
 
         } else if (state == 1) { // Ascending
-            assert(level > 0);
+            assert(internal->level > 0);
 
             // Find the last "false":
             size_t i = internal->level;  // 1-based index
