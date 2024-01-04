@@ -1678,7 +1678,8 @@ bool Solver::propcheck (const std::vector<int> &assumptions) {
     bool no_conflict = true;
 
     for (int lit : assumptions) {
-        const signed char b = internal->val (lit);
+        const int ilit = external->internalize (lit);
+        const signed char b = internal->val (ilit);
         if (b > 0) {
             // Literal already assigned, do nothing.
         } else if (b < 0) {
@@ -1687,7 +1688,7 @@ bool Solver::propcheck (const std::vector<int> &assumptions) {
             break;
         } else {
             // Assign and propagate the assumption:
-            internal->search_assume_decision (lit);
+            internal->search_assume_decision (ilit);
             if (!internal->propagate ()) {
                 // Conflict.
                 no_conflict = false;
@@ -1705,17 +1706,24 @@ bool Solver::propcheck (const std::vector<int> &assumptions) {
 }
 
 uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
-    assert(internal->level == 0);
+    assert(internal->conflict == 0);
 
-    // Trivial case:
-    if (variables.empty ()) {
-        return 0;
+    // TODO: move to arguments
+    bool verb = false;
+
+    // assert(internal->level == 0);
+    // Backtrack to 0 level before prop-checking:
+    if (internal->level) {
+        internal->backtrack(0);
     }
 
     // Propagate everything that needs to be propagated:
     if (!internal->propagate ()) {
-        // Conflict.
-        internal->conflict = 0;
+        return 0;
+    }
+
+    // Trivial case:
+    if (variables.empty ()) {
         return 0;
     }
 
@@ -1737,23 +1745,22 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
 
     while (1) {
         assert(internal->level <= (int)variables.size());
-        // std::cout << "state = " << state << ", level = " << level << std::endl;
+        if (verb) std::cout << "state = " << state << ", level = " << internal->level << ", total = " << total << std::endl;
 
         if (state == 0) { // Descending
             if (internal->level == (int)variables.size()) {
                 total++;
-                // std::cout << "total++ = " << total << std::endl;
+                if (verb) std::cout << "total++ = " << total << std::endl;
                 if (limit && total > limit) {
-                    // std::cout << "reached the limit: " << total << " > " << limit << std::endl;
+                    if (verb) std::cout << "reached the limit: " << total << " > " << limit << std::endl;
                     break;
                 }
                 state = 1; // state = Ascending
             } else {
-                int v = variables[internal->level];
-                const signed char s = cube[internal->level];
-                int lit = s * v;
-                const signed char b = internal->val (lit);
-                // std::cout << "assigning " << lit << std::endl;
+                int lit = cube[internal->level] * variables[internal->level];
+                if (verb) std::cout << "assigning " << lit << std::endl;
+                const int ilit = external->internalize (lit);
+                const signed char b = internal->val (ilit);
 
                 if (b > 0) {
                     // Dummy level:
@@ -1771,7 +1778,7 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
 
                 } else {
                     // Enqueue the assumption:
-                    internal->search_assume_decision (lit);
+                    internal->search_assume_decision (ilit);
 
                     // Need to propagate:
                     state = 2; // state = Propagating
@@ -1789,12 +1796,14 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
             // std::cout << "i = " << i << std::endl;
             if (i == 0) {
                 // Finish.
-                // std::cout << "i = 0 for cube = [";
-                // for (int k = i; k < level; k++) {
-                //     if (k > 0) std::cout << " ";
-                //     std::cout << cube[k] * variables[k];
-                // }
-                // std::cout << "] with total = " << total << std::endl;
+                if (verb) {
+                    std::cout << "i = 0 for cube = [";
+                    for (int k = i; k < internal->level; k++) {
+                        if (k > 0) std::cout << " ";
+                        std::cout << cube[k] * variables[k];
+                    }
+                    std::cout << "]" << std::endl;
+                }
                 break;
             }
 
@@ -1814,12 +1823,14 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
 
         } else if (state == 2) { // Propagating
             checked++;
-            // std::cout << "propagating [";
-            // for (int i = 0; i < level; i++) {
-            //     if (i > 0) std::cout << " ";
-            //     std::cout << cube[i] * variables[i];
-            // }
-            // std::cout << "]" << std::endl;
+            if (verb) {
+                std::cout << "propagating [";
+                for (int i = 0; i < internal->level; i++) {
+                    if (i > 0) std::cout << " ";
+                    std::cout << cube[i] * variables[i];
+                }
+                std::cout << "]" << std::endl;
+            }
             if (!internal->propagate ()) {
                 // Conflict.
                 internal->conflict = 0;
@@ -1836,9 +1847,10 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
         }
     }
 
+    // Backtrack to 0 level after prop-checking:
     internal->backtrack (0);
 
-    // std::cout << "Checked:  " << checked << ", found valid: " << total << std::endl;
+    if (verb) std::cout << "Checked:  " << checked << ", found valid: " << total << std::endl;
     return total;
 }
 
