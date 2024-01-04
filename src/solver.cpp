@@ -1793,7 +1793,7 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
             while (i > 0 && cube[i - 1] > 0) {
                 i--;
             }
-            // std::cout << "i = " << i << std::endl;
+            if (verb) std::cout << "i = " << i << std::endl;
             if (i == 0) {
                 // Finish.
                 if (verb) {
@@ -1815,7 +1815,7 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
             }
 
             // Backtrack before the i-th level:
-            // std::cout << "backtracking to " << (i - 1) << std::endl;
+            if (verb) std::cout << "backtracking to " << (i - 1) << std::endl;
             internal->backtrack (i - 1);
 
             // Switch the state:
