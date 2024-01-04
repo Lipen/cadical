@@ -5,8 +5,41 @@
 namespace CaDiCaL {
 
 bool Solver::propcheck (const std::vector<int> &assumptions) {
-    // TODO
-    return true;
+    assert(!internal->conflict);
+    if (internal->conflict) {
+        return false;
+    }
+
+    // Save the original decision level:
+    int level = internal->level;
+    bool no_conflicting_assignment = true;
+    bool no_conflict = true;
+
+    for (int lit : assumptions) {
+        const signed char b = internal->val (lit);
+        if (b > 0) {
+            // Literal already assigned, do nothing.
+        } else if (b < 0) {
+            // Conflict during assignment.
+            no_conflicting_assignment = false;
+            break;
+        } else {
+            // Assign and propagate the assumption:
+            internal->search_assume_decision (lit);
+            if (!internal->propagate ()) {
+                // Conflict.
+                no_conflict = false;
+                internal->conflict = 0;
+                break;
+            }
+        }
+    }
+
+    // Backtrack to the original decision level:
+    internal->backtrack (level);
+
+    // Return `true` if there were no conflicts:
+    return no_conflict && no_conflicting_assignment;
 }
 
 uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
