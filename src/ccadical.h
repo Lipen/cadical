@@ -9,6 +9,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 // C wrapper for CaDiCaL's C++ API following IPASIR.
 
