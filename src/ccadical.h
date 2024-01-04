@@ -58,8 +58,12 @@ void ccadical_melt (CCaDiCaL *, int lit);
 int ccadical_simplify (CCaDiCaL *);
 void ccadical_write_dimacs (CCaDiCaL *, const char *);
 
+void ccadical_propcheck_begin (CCaDiCaL *);
+void ccadical_propcheck_add (CCaDiCaL *, int lit);
+bool ccadical_propcheck (CCaDiCaL *);
+
 void ccadical_propcheck_tree_begin (CCaDiCaL *);
-void ccadical_propcheck_tree_add_variable (CCaDiCaL *, int v);
+void ccadical_propcheck_tree_add (CCaDiCaL *, int v);
 uint64_t ccadical_propcheck_tree (CCaDiCaL *, uint64_t limit);
 
 /*------------------------------------------------------------------------*/

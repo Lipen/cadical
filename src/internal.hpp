@@ -617,10 +617,6 @@ struct Internal {
   void assign_unit (int lit);
   bool propagate ();
 
-  // Tree-based propagation checker.
-  //
-  uint64_t propcheck_all_tree (const std::vector<int> &variables, uint64_t limit);
-
   void propergate (); // Repropagate without blocking literals.
   void propergate_reimply ();
 

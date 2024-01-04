@@ -4,18 +4,23 @@
 
 namespace CaDiCaL {
 
-uint64_t Internal::propcheck_all_tree (const vector<int>& variables, uint64_t limit) {
+bool Solver::propcheck (const std::vector<int> &assumptions) {
+    // TODO
+    return true;
+}
+
+uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
     assert(level == 0);
 
     // Trivial case:
-    if (variables.empty()) {
+    if (variables.empty ()) {
         return 0;
     }
 
     // Propagate everything that needs to be propagated:
-    if (!propagate()) {
+    if (!internal->propagate ()) {
         // Conflict.
-        conflict = 0;
+        internal->conflict = 0;
         return 0;
     }
 
@@ -36,11 +41,11 @@ uint64_t Internal::propcheck_all_tree (const vector<int>& variables, uint64_t li
     int state = 0; // state = Descending
 
     while (1) {
-        assert(level <= (int)variables.size());
+        assert(internal->level <= (int)variables.size());
         // std::cout << "state = " << state << ", level = " << level << std::endl;
 
         if (state == 0) { // Descending
-            if (level == (int)variables.size()) {
+            if (internal->level == (int)variables.size()) {
                 total++;
                 // std::cout << "total++ = " << total << std::endl;
                 if (limit && total > limit) {
@@ -49,29 +54,29 @@ uint64_t Internal::propcheck_all_tree (const vector<int>& variables, uint64_t li
                 }
                 state = 1; // state = Ascending
             } else {
-                int v = variables[level];
-                const signed char s = cube[level];
+                int v = variables[internal->level];
+                const signed char s = cube[internal->level];
                 int lit = s * v;
-                const signed char b = val(lit);
+                const signed char b = internal->val (lit);
                 // std::cout << "assigning " << lit << std::endl;
 
                 if (b > 0) {
                     // Dummy level:
-                    new_trail_level (0);
+                    internal->new_trail_level (0);
 
                     // Keep descending:
                     state = 0; // state = Descending
 
                 } else if (b < 0) {
                     // Dummy level:
-                    new_trail_level (0);
+                    internal->new_trail_level (0);
 
                     // Need to ascend:
                     state = 1; // state = Ascending
 
                 } else {
                     // Enqueue the assumption:
-                    search_assume_decision (lit);
+                    internal->search_assume_decision (lit);
 
                     // Need to propagate:
                     state = 2; // state = Propagating
@@ -82,7 +87,7 @@ uint64_t Internal::propcheck_all_tree (const vector<int>& variables, uint64_t li
             assert(level > 0);
 
             // Find the last "false":
-            size_t i = level;  // 1-based index
+            size_t i = internal->level;  // 1-based index
             while (i > 0 && cube[i - 1] > 0) {
                 i--;
             }
@@ -107,7 +112,7 @@ uint64_t Internal::propcheck_all_tree (const vector<int>& variables, uint64_t li
 
             // Backtrack before the i-th level:
             // std::cout << "backtracking to " << (i - 1) << std::endl;
-            backtrack(i - 1);
+            internal->backtrack (i - 1);
 
             // Switch the state:
             state = 0;  // state = Descending
@@ -120,9 +125,9 @@ uint64_t Internal::propcheck_all_tree (const vector<int>& variables, uint64_t li
             //     std::cout << cube[i] * variables[i];
             // }
             // std::cout << "]" << std::endl;
-            if (!propagate()) {
+            if (!internal->propagate ()) {
                 // Conflict.
-                conflict = 0;
+                internal->conflict = 0;
                 state = 1; // state = Ascending
             } else {
                 // No conflict.
@@ -136,7 +141,7 @@ uint64_t Internal::propcheck_all_tree (const vector<int>& variables, uint64_t li
         }
     }
 
-    backtrack(0);
+    internal->backtrack (0);
 
     // std::cout << "Checked:  " << checked << ", found valid: " << total << std::endl;
     return total;

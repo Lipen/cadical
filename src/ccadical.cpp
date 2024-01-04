@@ -61,7 +61,8 @@ struct Wrapper : Learner, Terminator {
     delete solver;
   }
 
-  std::vector<int> variables;
+  std::vector<int> propcheck_assumptions;
+  std::vector<int> propcheck_tree_variables;
 };
 
 } // namespace CaDiCaL
@@ -213,19 +214,34 @@ void ccadical_write_dimacs(CCaDiCaL *ptr, const char *path) {
   ((Wrapper *) ptr)->solver->write_dimacs (path);
 }
 
-void ccadical_propcheck_tree_begin (CCaDiCaL *ptr) {
+void ccadical_propcheck_begin (CCaDiCaL *ptr) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  wrapper->variables.clear();
+  wrapper->propcheck_assumptions.clear();
 }
 
-void ccadical_propcheck_tree_add_variable (CCaDiCaL *ptr, int v){
+void ccadical_propcheck_add (CCaDiCaL *ptr, int lit){
   Wrapper *wrapper = (Wrapper *) ptr;
-  wrapper->variables.push_back(v);
+  wrapper->propcheck_assumptions.push_back (lit);
+}
+
+bool ccadical_propcheck (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->solver->propcheck (wrapper->propcheck_assumptions);
+}
+
+void ccadical_propcheck_tree_begin (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  wrapper->propcheck_tree_variables.clear ();
+}
+
+void ccadical_propcheck_tree_add (CCaDiCaL *ptr, int v){
+  Wrapper *wrapper = (Wrapper *) ptr;
+  wrapper->propcheck_tree_variables.push_back (v);
 }
 
 uint64_t ccadical_propcheck_tree (CCaDiCaL *ptr, uint64_t limit) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->solver->propcheck_all_tree (wrapper->variables, limit);
+  return wrapper->solver->propcheck_tree (wrapper->propcheck_tree_variables, limit);
 }
 
 }
