@@ -31,6 +31,7 @@ extern "C" {
 // Common 'C++' headers.
 
 #include <algorithm>
+#include <iostream>
 #include <queue>
 #include <string>
 #include <unordered_set>
