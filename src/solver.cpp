@@ -1667,10 +1667,35 @@ void Solver::error (const char *fmt, ...) {
 }
 
 bool Solver::propcheck (const std::vector<int> &assumptions) {
-    assert(!internal->conflict);
-    if (internal->conflict) {
+    if (internal->unsat || internal->unsat_constraint) {
         return false;
     }
+
+    assert(!internal->conflict);
+    if (internal->conflict) {
+        exit(42);
+        return false;
+    }
+
+    int old_rephase = internal->opts.rephase;
+    internal->opts.rephase = 0;
+    int old_lucky = internal->opts.lucky;
+    internal->opts.lucky = 0;
+    int old_restoreall = internal->opts.restoreall;
+    internal->opts.restoreall = 2;
+    int tmp = internal->already_solved ();
+    if (!tmp) {
+        tmp = internal->restore_clauses ();
+    }
+    if (tmp) {
+        internal->opts.rephase = old_rephase;
+        internal->opts.lucky = old_lucky;
+        internal->opts.restoreall = old_restoreall;
+        internal->reset_solving();
+        internal->report_solving(tmp);
+        return false;
+    }
+    internal->opts.restoreall = old_restoreall;
 
     // Save the original decision level:
     int level = internal->level;
@@ -1692,7 +1717,6 @@ bool Solver::propcheck (const std::vector<int> &assumptions) {
             if (!internal->propagate ()) {
                 // Conflict.
                 no_conflict = false;
-                internal->conflict = 0;
                 break;
             }
         }
@@ -1700,6 +1724,15 @@ bool Solver::propcheck (const std::vector<int> &assumptions) {
 
     // Backtrack to the original decision level:
     internal->backtrack (level);
+
+    // Restore options:
+    internal->opts.rephase = old_rephase;
+    internal->opts.lucky = old_lucky;
+
+    // Reset conflict:
+    internal->conflict = 0;
+    internal->reset_solving();
+    internal->report_solving(tmp);
 
     // Return `true` if there were no conflicts:
     return no_conflict && no_conflicting_assignment;
