@@ -234,7 +234,7 @@ void ccadical_propcheck_tree_begin (CCaDiCaL *ptr) {
   wrapper->propcheck_tree_variables.clear ();
 }
 
-void ccadical_propcheck_tree_add (CCaDiCaL *ptr, int v){
+void ccadical_propcheck_tree_add (CCaDiCaL *ptr, int v) {
   Wrapper *wrapper = (Wrapper *) ptr;
   wrapper->propcheck_tree_variables.push_back (v);
 }
