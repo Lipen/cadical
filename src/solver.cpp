@@ -1731,8 +1731,8 @@ bool Solver::propcheck (const std::vector<int> &assumptions) {
 
     // Reset conflict:
     internal->conflict = 0;
-    internal->reset_solving();
-    internal->report_solving(tmp);
+    internal->reset_solving ();
+    internal->report_solving (tmp);
 
     // Return `true` if there were no conflicts:
     return no_conflict && no_conflicting_assignment;
