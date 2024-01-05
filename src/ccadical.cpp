@@ -219,7 +219,7 @@ void ccadical_propcheck_begin (CCaDiCaL *ptr) {
   wrapper->propcheck_assumptions.clear();
 }
 
-void ccadical_propcheck_add (CCaDiCaL *ptr, int lit){
+void ccadical_propcheck_add (CCaDiCaL *ptr, int lit) {
   Wrapper *wrapper = (Wrapper *) ptr;
   wrapper->propcheck_assumptions.push_back (lit);
 }
