@@ -37,9 +37,10 @@ void ccadical_set_learn (CCaDiCaL *, void *state, int max_length,
 
 void ccadical_constrain (CCaDiCaL *, int lit);
 int ccadical_constraint_failed (CCaDiCaL *);
-void ccadical_set_option (CCaDiCaL *, const char *name, int val);
-void ccadical_limit (CCaDiCaL *, const char *name, int limit);
+bool ccadical_configure (CCaDiCaL *, const char *name);
+bool ccadical_set_option (CCaDiCaL *, const char *name, int val);
 int ccadical_get_option (CCaDiCaL *, const char *name);
+void ccadical_limit (CCaDiCaL *, const char *name, int limit);
 void ccadical_print_statistics (CCaDiCaL *);
 int64_t ccadical_vars (CCaDiCaL *);
 int64_t ccadical_active (CCaDiCaL *);

@@ -87,16 +87,20 @@ int ccadical_constraint_failed (CCaDiCaL *wrapper) {
   return ((Wrapper *) wrapper)->solver->constraint_failed ();
 }
 
-void ccadical_set_option (CCaDiCaL *wrapper, const char *name, int val) {
-  ((Wrapper *) wrapper)->solver->set (name, val);
+bool ccadical_configure (CCaDiCaL *wrapper, const char *name) {
+  return ((Wrapper *) wrapper)->solver->configure (name);
 }
 
-void ccadical_limit (CCaDiCaL *wrapper, const char *name, int val) {
-  ((Wrapper *) wrapper)->solver->limit (name, val);
+bool ccadical_set_option (CCaDiCaL *wrapper, const char *name, int val) {
+  return ((Wrapper *) wrapper)->solver->set (name, val);
 }
 
 int ccadical_get_option (CCaDiCaL *wrapper, const char *name) {
   return ((Wrapper *) wrapper)->solver->get (name);
+}
+
+void ccadical_limit (CCaDiCaL *wrapper, const char *name, int val) {
+  ((Wrapper *) wrapper)->solver->limit (name, val);
 }
 
 void ccadical_add (CCaDiCaL *wrapper, int lit) {

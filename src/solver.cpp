@@ -1668,15 +1668,18 @@ void Solver::error (const char *fmt, ...) {
 
 bool Solver::propcheck (const std::vector<int> &assumptions) {
     if (internal->unsat || internal->unsat_constraint) {
+        std::cout << "Already unsat" << std::endl;
         return false;
     }
 
     assert(!internal->conflict);
     if (internal->conflict) {
+        std::cout << "Conflict before propcheck" << std::endl;
         exit(42);
         return false;
     }
 
+#if 1
     int old_rephase = internal->opts.rephase;
     internal->opts.rephase = 0;
     int old_lucky = internal->opts.lucky;
@@ -1684,21 +1687,24 @@ bool Solver::propcheck (const std::vector<int> &assumptions) {
     int old_restoreall = internal->opts.restoreall;
     internal->opts.restoreall = 2;
     int tmp = internal->already_solved ();
+    if (tmp) std::cout << "tmp is true after already_solved()" << std::endl;
     if (!tmp) {
         tmp = internal->restore_clauses ();
+        if (tmp) std::cout << "tmp is true after restore_clauses()" << std::endl;
     }
+    internal->opts.restoreall = old_restoreall;
     if (tmp) {
         internal->opts.rephase = old_rephase;
         internal->opts.lucky = old_lucky;
-        internal->opts.restoreall = old_restoreall;
         internal->reset_solving();
         internal->report_solving(tmp);
         return false;
     }
-    internal->opts.restoreall = old_restoreall;
+#endif
 
     // Save the original decision level:
     int level = internal->level;
+
     bool no_conflicting_assignment = true;
     bool no_conflict = true;
 
@@ -1717,6 +1723,8 @@ bool Solver::propcheck (const std::vector<int> &assumptions) {
             if (!internal->propagate ()) {
                 // Conflict.
                 no_conflict = false;
+                internal->conflict = 0;
+                // internal->analyze ();
                 break;
             }
         }
@@ -1725,14 +1733,14 @@ bool Solver::propcheck (const std::vector<int> &assumptions) {
     // Backtrack to the original decision level:
     internal->backtrack (level);
 
-    // Restore options:
+#if 1
+    // Restore:
     internal->opts.rephase = old_rephase;
     internal->opts.lucky = old_lucky;
-
-    // Reset conflict:
     internal->conflict = 0;
     internal->reset_solving ();
     internal->report_solving (tmp);
+#endif
 
     // Return `true` if there were no conflicts:
     return no_conflict && no_conflicting_assignment;
@@ -1744,24 +1752,56 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
     // TODO: move to arguments
     bool verb = false;
 
-    // assert(internal->level == 0);
-    // Backtrack to 0 level before prop-checking:
-    if (internal->level) {
-        internal->backtrack(0);
-    }
-
-    // Propagate everything that needs to be propagated:
-    if (!internal->propagate ()) {
+    if (internal->unsat || internal->unsat_constraint) {
+        std::cout << "Already unsat" << std::endl;
         return 0;
     }
 
     // Trivial case:
     if (variables.empty ()) {
+        std::cout << "Trivial case" << std::endl;
         return 0;
     }
 
+    // assert(internal->level == 0);
+    // Backtrack to 0 level before prop-checking:
+    if (internal->level) {
+        std::cout << "Backtracking from level " << internal->level << " to 0" << std::endl;
+        internal->backtrack (0);
+    }
+
+    // Propagate everything that needs to be propagated:
+    if (!internal->propagate ()) {
+        std::cout << "Conflict during pre-propagation" << std::endl;
+        internal->conflict = 0;
+        return 0;
+    }
+
+#if 0
+    int old_rephase = internal->opts.rephase;
+    internal->opts.rephase = 0;
+    int old_lucky = internal->opts.lucky;
+    internal->opts.lucky = 0;
+    int old_restoreall = internal->opts.restoreall;
+    internal->opts.restoreall = 2;
+    int tmp = internal->already_solved ();
+    if (tmp) std::cout << "tmp is true after already_solved()" << std::endl;
+    if (!tmp) {
+        tmp = internal->restore_clauses ();
+        if (tmp) std::cout << "tmp is true after restore_clauses()" << std::endl;
+    }
+    internal->opts.restoreall = old_restoreall;
+    if (tmp) {
+        internal->opts.rephase = old_rephase;
+        internal->opts.lucky = old_lucky;
+        internal->reset_solving();
+        internal->report_solving(tmp);
+        return 0;
+    }
+#endif
+
     // Signs:
-    vector<int> cube (variables.size(), -1);
+    vector<int> cube (variables.size (), -1);
 
     // Number of valid cubes:
     uint64_t total = 0;
@@ -1882,6 +1922,15 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit) {
 
     // Backtrack to 0 level after prop-checking:
     internal->backtrack (0);
+
+#if 0
+    // Restore:
+    internal->opts.rephase = old_rephase;
+    internal->opts.lucky = old_lucky;
+    internal->conflict = 0;
+    internal->reset_solving ();
+    internal->report_solving (tmp);
+#endif
 
     if (verb) std::cout << "Checked:  " << checked << ", found valid: " << total << std::endl;
     return total;
