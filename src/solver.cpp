@@ -1746,7 +1746,7 @@ bool Solver::propcheck (const std::vector<int> &assumptions) {
     return no_conflict && no_conflicting_assignment;
 }
 
-uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit, vector<vector<int>> *out_valid) {
+uint64_t Solver::propcheck_all_tree (const vector<int>& variables, uint64_t limit, vector<vector<int>> *out_valid) {
     assert(internal->conflict == 0);
 
     // TODO: move to arguments
@@ -1806,7 +1806,7 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit, v
     // Number of valid cubes:
     uint64_t total = 0;
     if (out_valid) {
-        out_valid.clear();
+        out_valid->clear();
     }
 
     // Number of propagations:
@@ -1832,7 +1832,7 @@ uint64_t Solver::propcheck_tree (const vector<int>& variables, uint64_t limit, v
                         int lit = cube[i] * variables[i];
                         out_cube.push_back(lit);
                     }
-                    out_valid->push_back(valid);
+                    out_valid->push_back(out_cube);
                 }
                 if (verb) std::cout << "total++ = " << total << std::endl;
                 if (limit && total >= limit) {
