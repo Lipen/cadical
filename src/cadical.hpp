@@ -229,7 +229,7 @@ public:
   static const char *signature (); // name of this library
 
   bool propcheck (const std::vector<int> &assumptions);
-  uint64_t propcheck_tree (const std::vector<int> &variables, uint64_t limit);
+  uint64_t propcheck_tree (const std::vector<int> &variables, uint64_t limit, std::vector<std::vector<int>> *out_valid);
 
   // Core functionality as in the IPASIR incremental SAT solver interface.
   // (recall 'READY = CONFIGURING | STEADY  | SATISFIED | UNSATISFIED').

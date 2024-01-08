@@ -63,6 +63,7 @@ struct Wrapper : Learner, Terminator {
 
   std::vector<int> propcheck_assumptions;
   std::vector<int> propcheck_tree_variables;
+  std::vector<std::vector<int>> propcheck_tree_valid;
 };
 
 } // namespace CaDiCaL
@@ -245,7 +246,27 @@ void ccadical_propcheck_tree_add (CCaDiCaL *ptr, int v) {
 
 uint64_t ccadical_propcheck_tree (CCaDiCaL *ptr, uint64_t limit) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->solver->propcheck_tree (wrapper->propcheck_tree_variables, limit);
+  return wrapper->solver->propcheck_tree (wrapper->propcheck_tree_variables, limit, NULL);
+}
+
+uint64_t ccadical_propcheck_tree_save_valid (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->solver->propcheck_tree (wrapper->propcheck_tree_variables, 0, &wrapper->propcheck_tree_valid);
+}
+size_t ccadical_propcheck_tree_get_valid_length (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->propcheck_tree_valid.size();
+}
+size_t ccadical_propcheck_tree_get_cube_length (CCaDiCaL * ptr, size_t i) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->propcheck_tree_valid[i].size();
+}
+void ccadical_propcheck_tree_get_cube (CCaDiCaL *ptr, size_t i, int *out_cube) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  const std::vector<int> &cube = wrapper->propcheck_tree_valid[i];
+  for (size_t j = 0; j < cube.size(); j++) {
+    out_cube[j] = cube[j];
+  }
 }
 
 }

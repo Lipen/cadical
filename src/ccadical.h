@@ -68,6 +68,11 @@ void ccadical_propcheck_tree_begin (CCaDiCaL *);
 void ccadical_propcheck_tree_add (CCaDiCaL *, int v);
 uint64_t ccadical_propcheck_tree (CCaDiCaL *, uint64_t limit);
 
+uint64_t ccadical_propcheck_tree_save_valid (CCaDiCaL *);
+size_t ccadical_propcheck_tree_get_valid_length (CCaDiCaL *);
+size_t ccadical_propcheck_tree_get_cube_length (CCaDiCaL *, size_t i);
+void ccadical_propcheck_tree_get_cube (CCaDiCaL *, size_t i, int *out_cube);
+
 /*------------------------------------------------------------------------*/
 
 // Support legacy names used before moving to more IPASIR conforming names.
