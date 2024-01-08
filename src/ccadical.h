@@ -67,7 +67,6 @@ bool ccadical_propcheck (CCaDiCaL *);
 void ccadical_propcheck_all_tree_begin (CCaDiCaL *);
 void ccadical_propcheck_all_tree_add (CCaDiCaL *, int v);
 uint64_t ccadical_propcheck_all_tree (CCaDiCaL *, uint64_t limit);
-
 uint64_t ccadical_propcheck_all_tree_save_valid (CCaDiCaL *);
 size_t ccadical_propcheck_all_tree_get_valid_length (CCaDiCaL *);
 size_t ccadical_propcheck_all_tree_get_cube_length (CCaDiCaL *, size_t i);
