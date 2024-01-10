@@ -168,6 +168,10 @@ int ccadical_fixed (CCaDiCaL *wrapper, int lit) {
   return ((Wrapper*) wrapper)->solver->fixed (lit);
 }
 
+bool ccadical_active_lit (CCaDiCaL *wrapper, int lit) {
+  return ((Wrapper *) wrapper)->solver->active (lit);
+}
+
 void ccadical_set_terminate (CCaDiCaL *ptr, void *state,
                              int (*terminate) (void *)) {
   Wrapper *wrapper = (Wrapper *) ptr;

@@ -50,6 +50,7 @@ int64_t ccadical_decisions (CCaDiCaL *);
 int64_t ccadical_restarts (CCaDiCaL *);
 int64_t ccadical_propagations (CCaDiCaL *);
 int ccadical_fixed (CCaDiCaL *, int lit);
+bool ccadical_active_lit (CCaDiCaL *, int lit);
 int ccadical_trace_proof (CCaDiCaL *, FILE *, const char *);
 void ccadical_close_proof (CCaDiCaL *);
 void ccadical_conclude (CCaDiCaL *);

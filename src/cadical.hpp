@@ -723,6 +723,8 @@ public:
   //
   int fixed (int lit) const;
 
+  bool active (int lit) const;
+
   //------------------------------------------------------------------------
   // Force the default decision phase of a variable to a certain value.
   //

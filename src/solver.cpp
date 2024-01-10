@@ -797,6 +797,16 @@ int Solver::fixed (int lit) const {
   return res;
 }
 
+bool Solver::active (int lit) const {
+  TRACE ("active", lit);
+  REQUIRE_VALID_STATE ();
+  REQUIRE_VALID_LIT (lit);
+  const int ilit = external->internalize (lit);
+  bool res = internal->active (ilit);
+  LOG_API_CALL_RETURNS ("active", lit, res);
+  return res;
+}
+
 void Solver::phase (int lit) {
   TRACE ("phase", lit);
   REQUIRE_VALID_OR_SOLVING_STATE ();
