@@ -64,6 +64,9 @@ void ccadical_write_dimacs (CCaDiCaL *, const char *);
 void ccadical_propcheck_begin (CCaDiCaL *);
 void ccadical_propcheck_add (CCaDiCaL *, int lit);
 bool ccadical_propcheck (CCaDiCaL *);
+bool ccadical_propcheck_save_propagated (CCaDiCaL *);
+size_t ccadical_propcheck_get_propagated_length (CCaDiCaL *);
+void ccadical_propcheck_get_propagated (CCaDiCaL *, int *out_propagated);
 
 void ccadical_propcheck_all_tree_begin (CCaDiCaL *);
 void ccadical_propcheck_all_tree_add (CCaDiCaL *, int v);

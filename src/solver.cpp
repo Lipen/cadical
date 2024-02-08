@@ -1676,7 +1676,7 @@ void Solver::error (const char *fmt, ...) {
   va_end (ap);
 }
 
-bool Solver::propcheck (const std::vector<int> &assumptions) {
+bool Solver::propcheck (const std::vector<int> &assumptions, std::vector<int> *out_propagated) {
     if (internal->unsat || internal->unsat_constraint) {
         std::cout << "Already unsat" << std::endl;
         return false;
@@ -1733,15 +1733,35 @@ bool Solver::propcheck (const std::vector<int> &assumptions) {
             if (!internal->propagate ()) {
                 // Conflict.
                 no_conflict = false;
-                internal->conflict = 0;
+                // internal->conflict = 0;
                 // internal->analyze ();
                 break;
             }
         }
     }
 
-    // Backtrack to the original decision level:
-    internal->backtrack (level);
+    if (internal->level > level) {
+        if (out_propagated) {
+            out_propagated->clear();
+
+            // Copy the trail:
+            for (size_t i = internal->control[level + 1].trail; i < internal->trail.size(); ++i) {
+                const int ilit = internal->trail[i];
+                const int elit = internal->externalize (ilit);
+                out_propagated->push_back (elit);
+            }
+            // If there was a conflict, push the conflicting literal as well:
+            if (!no_conflict) {
+                literal_iterator conflict_ptr = internal->conflict->begin();
+                int ilit = *conflict_ptr;
+                int elit = internal->externalize (ilit);
+                out_propagated->push_back (elit);
+            }
+        }
+
+        // Backtrack to the original decision level:
+        internal->backtrack (level);
+    }
 
 #if 1
     // Restore:
