@@ -1349,6 +1349,8 @@ struct Internal {
   // Export and traverse all irredundant (non-unit) clauses.
   //
   bool traverse_clauses (ClauseIterator &);
+  // ...also include redundant clauses:
+  bool traverse_all_clauses (ClauseIterator &);
 
   // Export and traverse all irredundant (non-unit) clauses.
   //

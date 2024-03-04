@@ -844,6 +844,7 @@ public:
   //   ensure (VALID)
   //
   bool traverse_clauses (ClauseIterator &) const;
+  bool traverse_all_clauses (ClauseIterator &) const;
   bool traverse_witnesses_backward (WitnessIterator &) const;
   bool traverse_witnesses_forward (WitnessIterator &) const;
 

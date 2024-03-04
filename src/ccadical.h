@@ -60,6 +60,9 @@ int ccadical_frozen (CCaDiCaL *, int lit);
 void ccadical_melt (CCaDiCaL *, int lit);
 int ccadical_simplify (CCaDiCaL *);
 void ccadical_write_dimacs (CCaDiCaL *, const char *);
+size_t ccadical_build_all_clauses(CCaDiCaL *);
+size_t ccadical_get_clause_length (CCaDiCaL *, size_t i);
+void ccadical_get_clause (CCaDiCaL *, size_t i, int *out_clause);
 
 /*------------------------------------------------------------------------*/
 

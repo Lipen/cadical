@@ -1426,6 +1426,15 @@ bool Solver::traverse_clauses (ClauseIterator &it) const {
   return res;
 }
 
+bool Solver::traverse_all_clauses (ClauseIterator &it) const {
+  LOG_API_CALL_BEGIN ("traverse_all_clauses");
+  REQUIRE_VALID_STATE ();
+  bool res = internal->traverse_all_clauses (it) &&
+             internal->traverse_constraint (it);
+  LOG_API_CALL_RETURNS ("traverse_all_clauses", res);
+  return res;
+}
+
 bool Solver::traverse_witnesses_backward (WitnessIterator &it) const {
   LOG_API_CALL_BEGIN ("traverse_witnesses_backward");
   REQUIRE_VALID_STATE ();
