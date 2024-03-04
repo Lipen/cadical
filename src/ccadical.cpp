@@ -236,13 +236,34 @@ void ccadical_propcheck_add (CCaDiCaL *ptr, int lit) {
 
 bool ccadical_propcheck (CCaDiCaL *ptr) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->solver->propcheck (wrapper->propcheck_assumptions, NULL);
+  return wrapper->solver->propcheck (wrapper->propcheck_assumptions, true);
+}
+
+bool ccadical_propcheck_num_propagated (CCaDiCaL *ptr, uint64_t* num_propagated) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->solver->propcheck (wrapper->propcheck_assumptions, true, NULL, num_propagated);
 }
 
 bool ccadical_propcheck_save_propagated (CCaDiCaL *ptr) {
   Wrapper *wrapper = (Wrapper *) ptr;
   wrapper->propcheck_propagated.clear();
-  return wrapper->solver->propcheck (wrapper->propcheck_assumptions, &wrapper->propcheck_propagated);
+  return wrapper->solver->propcheck (wrapper->propcheck_assumptions, true, &wrapper->propcheck_propagated);
+}
+
+bool ccadical_propcheck_no_restore (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->solver->propcheck (wrapper->propcheck_assumptions, false);
+}
+
+bool ccadical_propcheck_num_propagated_no_restore (CCaDiCaL *ptr, uint64_t* num_propagated) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->solver->propcheck (wrapper->propcheck_assumptions, false, NULL, num_propagated);
+}
+
+bool ccadical_propcheck_save_propagated_no_restore (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  wrapper->propcheck_propagated.clear();
+  return wrapper->solver->propcheck (wrapper->propcheck_assumptions, false, &wrapper->propcheck_propagated);
 }
 
 size_t ccadical_propcheck_get_propagated_length (CCaDiCaL *ptr) {

@@ -906,7 +906,7 @@ public:
   static void build (FILE *file, const char *prefix = "c ");
 
   //==== Additional methods ================================================
-  bool propcheck (const std::vector<int> &assumptions, std::vector<int> *out_propagated = 0);
+  bool propcheck (const std::vector<int> &assumptions, bool restore = true, std::vector<int> *out_propagated = 0, uint64_t *num_propagated = 0);
   uint64_t propcheck_all_tree (const std::vector<int> &variables, uint64_t limit, std::vector<std::vector<int>> *out_valid = 0);
   //========================================================================
 

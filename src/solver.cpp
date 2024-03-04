@@ -1676,7 +1676,7 @@ void Solver::error (const char *fmt, ...) {
   va_end (ap);
 }
 
-bool Solver::propcheck (const std::vector<int> &assumptions, std::vector<int> *out_propagated) {
+bool Solver::propcheck (const std::vector<int> &assumptions, bool restore, std::vector<int> *out_propagated, uint64_t *num_propagated) {
     if (internal->unsat || internal->unsat_constraint) {
         std::cout << "Already unsat" << std::endl;
         return false;
@@ -1689,20 +1689,19 @@ bool Solver::propcheck (const std::vector<int> &assumptions, std::vector<int> *o
         return false;
     }
 
-#if 1
     int old_rephase = internal->opts.rephase;
     internal->opts.rephase = 0;
     int old_lucky = internal->opts.lucky;
     internal->opts.lucky = 0;
-    int old_restoreall = internal->opts.restoreall;
-    internal->opts.restoreall = 2;
     int tmp = internal->already_solved ();
     if (tmp) std::cout << "tmp is true after already_solved()" << std::endl;
-    if (!tmp) {
+    if (!tmp && restore) {
+        int old_restoreall = internal->opts.restoreall;
+        internal->opts.restoreall = 2;
         tmp = internal->restore_clauses ();
         if (tmp) std::cout << "tmp is true after restore_clauses()" << std::endl;
+        internal->opts.restoreall = old_restoreall;
     }
-    internal->opts.restoreall = old_restoreall;
     if (tmp) {
         internal->opts.rephase = old_rephase;
         internal->opts.lucky = old_lucky;
@@ -1710,7 +1709,6 @@ bool Solver::propcheck (const std::vector<int> &assumptions, std::vector<int> *o
         internal->report_solving(tmp);
         return false;
     }
-#endif
 
     // Save the original decision level:
     int level = internal->level;
@@ -1758,19 +1756,29 @@ bool Solver::propcheck (const std::vector<int> &assumptions, std::vector<int> *o
                 out_propagated->push_back (elit);
             }
         }
+        if (num_propagated) {
+            *num_propagated = 0;
+
+            // Copy the trail:
+            for (size_t i = internal->control[level + 1].trail; i < internal->trail.size(); ++i) {
+                (*num_propagated)++;
+            }
+            // If there was a conflict, push the conflicting literal as well:
+            if (!no_conflict) {
+                (*num_propagated)++;
+            }
+        }
 
         // Backtrack to the original decision level:
         internal->backtrack (level);
     }
 
-#if 1
     // Restore:
     internal->opts.rephase = old_rephase;
     internal->opts.lucky = old_lucky;
     internal->conflict = 0;
     internal->reset_solving ();
     internal->report_solving (tmp);
-#endif
 
     // Return `true` if there were no conflicts:
     return no_conflict && no_conflicting_assignment;
