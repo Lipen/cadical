@@ -99,6 +99,17 @@ void ccadical_propcheck_all_tree_get_cube (CCaDiCaL *, size_t i, int *out_cube);
 
 /*------------------------------------------------------------------------*/
 
+// Internal stuff
+
+bool ccadical_internal_propagate (CCaDiCaL *);
+void ccadical_internal_reset_conflict (CCaDiCaL *);
+int ccadical_internal_level (CCaDiCaL *);
+signed char ccadical_internal_val (CCaDiCaL *, int lit);
+void ccadical_internal_assume_decision (CCaDiCaL *, int lit);
+void ccadical_internal_backtrack (CCaDiCaL *, int new_level);
+
+/*------------------------------------------------------------------------*/
+
 // Support legacy names used before moving to more IPASIR conforming names.
 
 #define ccadical_reset ccadical_release

@@ -1994,4 +1994,34 @@ uint64_t Solver::propcheck_all_tree (const vector<int>& variables, uint64_t limi
     return total;
 }
 
+bool Solver::internal_propagate () {
+    return internal->propagate ();
+}
+
+void Solver::internal_reset_conflict () {
+    internal->conflict = 0;
+}
+
+int Solver::internal_level () const {
+    return internal->level;
+}
+
+signed char Solver::internal_val (int lit) const {
+    const int ilit = external->internalize (lit);
+    return internal->val (ilit);
+}
+
+void Solver::internal_assume_decision (int lit) {
+    if (lit) {
+        const int ilit = external->internalize (lit);
+        internal->search_assume_decision (ilit);
+    } else {
+        internal->new_trail_level (0);
+    }
+}
+
+void Solver::internal_backtrack (int new_level) {
+    internal->backtrack (new_level);
+}
+
 } // namespace CaDiCaL

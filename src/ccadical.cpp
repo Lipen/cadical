@@ -350,4 +350,34 @@ void ccadical_get_clause (CCaDiCaL *ptr, size_t i, int *out_clause) {
   }
 }
 
+bool ccadical_internal_propagate (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->solver->internal_propagate ();
+}
+
+void ccadical_internal_reset_conflict (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  wrapper->solver->internal_reset_conflict ();
+}
+
+int ccadical_internal_level (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->solver->internal_level ();
+}
+
+signed char ccadical_internal_val (CCaDiCaL *ptr, int lit) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->solver->internal_val (lit);
+}
+
+void ccadical_internal_assume_decision (CCaDiCaL *ptr, int lit) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  wrapper->solver->internal_assume_decision (lit);
+}
+
+void ccadical_internal_backtrack (CCaDiCaL *ptr, int new_level) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  wrapper->solver->internal_backtrack (new_level);
+}
+
 }

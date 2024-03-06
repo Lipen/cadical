@@ -909,6 +909,13 @@ public:
   //==== Additional methods ================================================
   bool propcheck (const std::vector<int> &assumptions, bool restore = true, std::vector<int> *out_propagated = 0, uint64_t *num_propagated = 0);
   uint64_t propcheck_all_tree (const std::vector<int> &variables, uint64_t limit, std::vector<std::vector<int>> *out_valid = 0);
+
+  bool internal_propagate ();
+  void internal_reset_conflict ();
+  int internal_level () const;
+  signed char internal_val (int lit) const;
+  void internal_assume_decision (int lit);
+  void internal_backtrack (int new_level);
   //========================================================================
 
 private:
