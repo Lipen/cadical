@@ -211,8 +211,8 @@ int ccadical_frozen (CCaDiCaL *ptr, int lit) {
   return ((Wrapper *) ptr)->solver->frozen (lit);
 }
 
-int ccadical_trace_proof (CCaDiCaL *ptr, FILE *file, const char *path) {
-  return ((Wrapper *) ptr)->solver->trace_proof (file, path);
+bool ccadical_trace_proof (CCaDiCaL *ptr, const char *path) {
+  return ((Wrapper *) ptr)->solver->trace_proof (path);
 }
 
 void ccadical_close_proof (CCaDiCaL *ptr) {
