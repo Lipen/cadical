@@ -71,6 +71,7 @@ void ccadical_write_dimacs (CCaDiCaL *, const char *);
 size_t ccadical_traverse_clauses(CCaDiCaL *, bool redundant DEFAULT_VALUE(false));
 size_t ccadical_get_clause_length (CCaDiCaL *, size_t i);
 void ccadical_get_clause (CCaDiCaL *, size_t i, int *out_clause);
+void ccadical_clear_clauses(CCaDiCaL *);
 
 /*------------------------------------------------------------------------*/
 

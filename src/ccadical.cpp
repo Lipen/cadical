@@ -355,6 +355,11 @@ void ccadical_get_clause (CCaDiCaL *ptr, size_t i, int *out_clause) {
   }
 }
 
+void ccadical_clear_clauses (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  wrapper->clauses.clear ();
+}
+
 bool ccadical_internal_propagate (CCaDiCaL *ptr) {
   Wrapper *wrapper = (Wrapper *) ptr;
   return wrapper->solver->internal_propagate ();
