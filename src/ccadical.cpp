@@ -290,6 +290,7 @@ void ccadical_propcheck_all_tree_add (CCaDiCaL *ptr, int v) {
   wrapper->propcheck_all_tree_variables.push_back (v);
 }
 
+// TODO: add `bool save_valid`
 uint64_t ccadical_propcheck_all_tree (CCaDiCaL *ptr, uint64_t limit) {
   Wrapper *wrapper = (Wrapper *) ptr;
   return wrapper->solver->propcheck_all_tree (wrapper->propcheck_all_tree_variables, limit, NULL);
