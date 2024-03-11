@@ -1749,14 +1749,13 @@ bool Solver::propcheck (const std::vector<int> &assumptions, bool restore, std::
 
     if (internal->level > level) {
         if (out_propagated) {
-            out_propagated->clear();
-
             // Copy the trail:
             for (size_t i = internal->control[level + 1].trail; i < internal->trail.size(); ++i) {
                 const int ilit = internal->trail[i];
                 const int elit = internal->externalize (ilit);
                 out_propagated->push_back (elit);
             }
+
             // If there was a conflict, push the conflicting literal as well:
             if (!no_conflict) {
                 literal_iterator conflict_ptr = internal->conflict->begin();
@@ -1765,6 +1764,7 @@ bool Solver::propcheck (const std::vector<int> &assumptions, bool restore, std::
                 out_propagated->push_back (elit);
             }
         }
+
         if (num_propagated) {
             *num_propagated = 0;
 
@@ -1772,6 +1772,7 @@ bool Solver::propcheck (const std::vector<int> &assumptions, bool restore, std::
             for (size_t i = internal->control[level + 1].trail; i < internal->trail.size(); ++i) {
                 (*num_propagated)++;
             }
+
             // If there was a conflict, push the conflicting literal as well:
             if (!no_conflict) {
                 (*num_propagated)++;

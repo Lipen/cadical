@@ -79,16 +79,8 @@ void ccadical_clear_clauses(CCaDiCaL *);
 
 void ccadical_propcheck_begin (CCaDiCaL *);
 void ccadical_propcheck_add (CCaDiCaL *, int lit);
-
-bool ccadical_propcheck (CCaDiCaL *);
-bool ccadical_propcheck_num_propagated (CCaDiCaL *, uint64_t *num_propagated);
-bool ccadical_propcheck_save_propagated (CCaDiCaL *);
-
-// no-restore versions
-bool ccadical_propcheck_no_restore (CCaDiCaL *);
-bool ccadical_propcheck_num_propagated_no_restore (CCaDiCaL *, uint64_t *num_propagated);
-bool ccadical_propcheck_save_propagated_no_restore (CCaDiCaL *);
-
+bool ccadical_propcheck (CCaDiCaL *, bool restore DEFAULT_VALUE(true), bool save DEFAULT_VALUE(false));
+uint64_t ccadical_propcheck_num_propagated (CCaDiCaL *);
 size_t ccadical_propcheck_get_propagated_length (CCaDiCaL *);
 void ccadical_propcheck_get_propagated (CCaDiCaL *, int *out_propagated);
 
@@ -98,10 +90,7 @@ void ccadical_propcheck_get_propagated (CCaDiCaL *, int *out_propagated);
 
 void ccadical_propcheck_all_tree_begin (CCaDiCaL *);
 void ccadical_propcheck_all_tree_add (CCaDiCaL *, int v);
-
-uint64_t ccadical_propcheck_all_tree (CCaDiCaL *, uint64_t limit);
-uint64_t ccadical_propcheck_all_tree_save_valid (CCaDiCaL *);
-
+uint64_t ccadical_propcheck_all_tree (CCaDiCaL *, uint64_t limit, bool save DEFAULT_VALUE(false));
 size_t ccadical_propcheck_all_tree_get_valid_length (CCaDiCaL *);
 size_t ccadical_propcheck_all_tree_get_cube_length (CCaDiCaL *, size_t i);
 void ccadical_propcheck_all_tree_get_cube (CCaDiCaL *, size_t i, int *out_cube);
