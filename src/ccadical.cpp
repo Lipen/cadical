@@ -66,7 +66,7 @@ struct Wrapper : Learner, Terminator {
   std::vector<int> propcheck_all_tree_variables;
   std::vector<std::vector<int>> propcheck_all_tree_valid;
 
-  std::vector<std::vector<int>> all_clauses;
+  std::vector<std::vector<int>> clauses;
 };
 
 } // namespace CaDiCaL
@@ -329,22 +329,26 @@ public:
   }
 };
 
-size_t ccadical_build_all_clauses(CCaDiCaL *ptr) {
-    Wrapper *wrapper = (Wrapper *) ptr;
-    wrapper->all_clauses.clear ();
-    ClauseCloner cloner (wrapper->all_clauses);
+size_t ccadical_traverse_clauses(CCaDiCaL *ptr, bool redundant) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  wrapper->clauses.clear ();
+  ClauseCloner cloner (wrapper->clauses);
+  if (redundant) {
     wrapper->solver->traverse_all_clauses (cloner);
-    return wrapper->all_clauses.size();
+  } else {
+    wrapper->solver->traverse_clauses (cloner);
+  }
+  return wrapper->clauses.size ();
 }
 
 size_t ccadical_get_clause_length (CCaDiCaL *ptr, size_t i) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->all_clauses[i].size();
+  return wrapper->clauses[i].size ();
 }
 
 void ccadical_get_clause (CCaDiCaL *ptr, size_t i, int *out_clause) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  const std::vector<int> &clause = wrapper->all_clauses[i];
+  const std::vector<int> &clause = wrapper->clauses[i];
   for (size_t j = 0; j < clause.size(); j++) {
     out_clause[j] = clause[j];
   }
