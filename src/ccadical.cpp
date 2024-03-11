@@ -270,7 +270,7 @@ bool ccadical_propcheck_save_propagated_no_restore (CCaDiCaL *ptr) {
 
 size_t ccadical_propcheck_get_propagated_length (CCaDiCaL *ptr) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->propcheck_propagated.size();
+  return wrapper->propcheck_propagated.size ();
 }
 
 void ccadical_propcheck_get_propagated (CCaDiCaL *ptr, int *out_propagated) {
@@ -302,12 +302,12 @@ uint64_t ccadical_propcheck_all_tree_save_valid (CCaDiCaL *ptr) {
 
 size_t ccadical_propcheck_all_tree_get_valid_length (CCaDiCaL *ptr) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->propcheck_all_tree_valid.size();
+  return wrapper->propcheck_all_tree_valid.size ();
 }
 
 size_t ccadical_propcheck_all_tree_get_cube_length (CCaDiCaL * ptr, size_t i) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->propcheck_all_tree_valid[i].size();
+  return wrapper->propcheck_all_tree_valid[i].size ();
 }
 
 void ccadical_propcheck_all_tree_get_cube (CCaDiCaL *ptr, size_t i, int *out_cube) {
@@ -324,7 +324,7 @@ class ClauseCloner : public ClauseIterator {
 public:
   ClauseCloner (std::vector<std::vector<int>> &d) : dest (d) {}
   bool clause (const std::vector<int> &c) {
-    dest.push_back(c);
+    dest.push_back (c);
     return true;
   }
 };
