@@ -2024,4 +2024,39 @@ void Solver::internal_backtrack (int new_level) {
     internal->backtrack (new_level);
 }
 
+void Solver::add_derived (int lit) {
+  TRACE ("add_derived", lit);
+  REQUIRE_VALID_STATE ();
+  if (lit)
+    REQUIRE_VALID_LIT (lit);
+  transition_to_steady_state ();
+
+  const int elit = lit;
+  assert (elit != INT_MIN);
+  external->reset_extended ();
+  const int ilit = external->internalize (elit);
+  assert (!elit == !ilit);
+  assert (abs (ilit) <= internal->max_var);
+  if (ilit) {
+    internal->clause.push_back (ilit);
+  } else {
+    size_t size = internal->clause.size ();
+    Clause *res = internal->new_clause (true, size);
+    if (internal->proof) {
+      internal->proof->add_derived_clause (res, internal->lrat_chain);
+    }
+    assert (internal->watching ());
+    internal->watch_clause (res);
+    internal->clause.clear ();
+    internal->lrat_chain.clear ();
+  }
+
+  adding_clause = lit;
+  if (adding_clause)
+    STATE (ADDING);
+  else if (!adding_constraint)
+    STATE (STEADY);
+  LOG_API_CALL_END ("add_derived", lit);
+}
+
 } // namespace CaDiCaL

@@ -107,6 +107,8 @@ signed char ccadical_internal_val (CCaDiCaL *, int lit);
 void ccadical_internal_assume_decision (CCaDiCaL *, int lit);
 void ccadical_internal_backtrack (CCaDiCaL *, int new_level);
 
+void ccadical_add_derived (CCaDiCaL *, int lit);
+
 /*------------------------------------------------------------------------*/
 
 // Support legacy names used before moving to more IPASIR conforming names.
