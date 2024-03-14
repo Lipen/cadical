@@ -320,7 +320,7 @@ struct Internal {
 
   // A variable is 'active' if it is not eliminated nor fixed.
   //
-  bool active (int lit) { return flags (lit).active (); }
+  bool active (int lit) const { return flags (lit).active (); }
 
   int active () const {
     int res = stats.active;
