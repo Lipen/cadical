@@ -801,8 +801,7 @@ bool Solver::active (int lit) const {
   TRACE ("active", lit);
   REQUIRE_VALID_STATE ();
   REQUIRE_VALID_LIT (lit);
-  const int ilit = external->internalize (lit);
-  bool res = internal->active (ilit);
+  bool res = external->active (lit);
   LOG_API_CALL_RETURNS ("active", lit, res);
   return res;
 }

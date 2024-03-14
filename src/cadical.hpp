@@ -722,7 +722,6 @@ public:
   //   ensure (VALID)
   //
   int fixed (int lit) const;
-
   bool active (int lit) const;
 
   //------------------------------------------------------------------------

@@ -1485,6 +1485,18 @@ inline int External::fixed (int elit) const {
   return internal->fixed (ilit);
 }
 
+inline bool External::active (int elit) const {
+  assert (elit);
+  assert (elit != INT_MIN);
+  const int eidx = abs (elit);
+  assert (eidx <= max_var);
+  int ilit = e2i[eidx];
+  assert (ilit);
+  if (elit < 0)
+    ilit = -ilit;
+  return internal->active (ilit);
+}
+
 /*------------------------------------------------------------------------*/
 
 // We want to have termination checks inlined, particularly the first
