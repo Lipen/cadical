@@ -82,98 +82,90 @@ const char *ccadical_signature (void) { return Solver::signature (); }
 
 CCaDiCaL *ccadical_init (void) { return (CCaDiCaL *) new Wrapper (); }
 
-void ccadical_release (CCaDiCaL *wrapper) { delete (Wrapper *) wrapper; }
+void ccadical_release (CCaDiCaL *ptr) { delete (Wrapper *) ptr; }
 
-void ccadical_constrain (CCaDiCaL *wrapper, int lit) {
-  ((Wrapper *) wrapper)->solver->constrain (lit);
+void ccadical_constrain (CCaDiCaL *ptr, int lit) {
+  ((Wrapper *) ptr)->solver->constrain (lit);
 }
 
-int ccadical_constraint_failed (CCaDiCaL *wrapper) {
-  return ((Wrapper *) wrapper)->solver->constraint_failed ();
+int ccadical_constraint_failed (CCaDiCaL *ptr) {
+  return ((Wrapper *) ptr)->solver->constraint_failed ();
 }
 
-bool ccadical_configure (CCaDiCaL *wrapper, const char *name) {
-  return ((Wrapper *) wrapper)->solver->configure (name);
+bool ccadical_configure (CCaDiCaL *ptr, const char *name) {
+  return ((Wrapper *) ptr)->solver->configure (name);
 }
 
-bool ccadical_set_option (CCaDiCaL *wrapper, const char *name, int val) {
-  return ((Wrapper *) wrapper)->solver->set (name, val);
+bool ccadical_set_option (CCaDiCaL *ptr, const char *name, int val) {
+  return ((Wrapper *) ptr)->solver->set (name, val);
 }
 
-int ccadical_get_option (CCaDiCaL *wrapper, const char *name) {
-  return ((Wrapper *) wrapper)->solver->get (name);
+int ccadical_get_option (CCaDiCaL *ptr, const char *name) {
+  return ((Wrapper *) ptr)->solver->get (name);
 }
 
-bool ccadical_limit (CCaDiCaL *wrapper, const char *name, int val) {
-  return ((Wrapper *) wrapper)->solver->limit (name, val);
+bool ccadical_limit (CCaDiCaL *ptr, const char *name, int val) {
+  return ((Wrapper *) ptr)->solver->limit (name, val);
 }
 
-void ccadical_add (CCaDiCaL *wrapper, int lit) {
-  ((Wrapper *) wrapper)->solver->add (lit);
+void ccadical_add (CCaDiCaL *ptr, int lit) {
+  ((Wrapper *) ptr)->solver->add (lit);
 }
 
-void ccadical_assume (CCaDiCaL *wrapper, int lit) {
-  ((Wrapper *) wrapper)->solver->assume (lit);
+void ccadical_assume (CCaDiCaL *ptr, int lit) {
+  ((Wrapper *) ptr)->solver->assume (lit);
 }
 
-int ccadical_solve (CCaDiCaL *wrapper) {
-  return ((Wrapper *) wrapper)->solver->solve ();
+int ccadical_solve (CCaDiCaL *ptr) {
+  return ((Wrapper *) ptr)->solver->solve ();
 }
 
-int ccadical_simplify (CCaDiCaL *wrapper) {
-  return ((Wrapper *) wrapper)->solver->simplify ();
+int ccadical_simplify (CCaDiCaL *ptr) {
+  return ((Wrapper *) ptr)->solver->simplify ();
 }
 
-int ccadical_val (CCaDiCaL *wrapper, int lit) {
-  return ((Wrapper *) wrapper)->solver->val (lit);
+int ccadical_val (CCaDiCaL *ptr, int lit) {
+  return ((Wrapper *) ptr)->solver->val (lit);
 }
 
-int ccadical_failed (CCaDiCaL *wrapper, int lit) {
-  return ((Wrapper *) wrapper)->solver->failed (lit);
+int ccadical_failed (CCaDiCaL *ptr, int lit) {
+  return ((Wrapper *) ptr)->solver->failed (lit);
 }
 
-void ccadical_print_statistics (CCaDiCaL *wrapper) {
-  ((Wrapper *) wrapper)->solver->statistics ();
+void ccadical_print_statistics (CCaDiCaL *ptr) {
+  ((Wrapper *) ptr)->solver->statistics ();
 }
 
-void ccadical_terminate (CCaDiCaL *wrapper) {
-  ((Wrapper *) wrapper)->solver->terminate ();
+void ccadical_terminate (CCaDiCaL *ptr) {
+  ((Wrapper *) ptr)->solver->terminate ();
 }
 
-int64_t ccadical_vars (CCaDiCaL *wrapper) {
-  return ((Wrapper *) wrapper)->solver->vars ();
+int64_t ccadical_vars (CCaDiCaL *ptr) {
+  return ((Wrapper *) ptr)->solver->vars ();
 }
 
-int64_t ccadical_active (CCaDiCaL *wrapper) {
-  return ((Wrapper *) wrapper)->solver->active ();
+int64_t ccadical_active (CCaDiCaL *ptr) {
+  return ((Wrapper *) ptr)->solver->active ();
 }
 
-int64_t ccadical_irredundant (CCaDiCaL *wrapper) {
-  return ((Wrapper *) wrapper)->solver->irredundant ();
+int64_t ccadical_irredundant (CCaDiCaL *ptr) {
+  return ((Wrapper *) ptr)->solver->irredundant ();
 }
 
-int64_t ccadical_conflicts (CCaDiCaL *wrapper) {
-  return ((Wrapper*) wrapper)->solver->conflicts ();
+int64_t ccadical_conflicts (CCaDiCaL *ptr) {
+  return ((Wrapper*) ptr)->solver->conflicts ();
 }
 
-int64_t ccadical_decisions (CCaDiCaL *wrapper) {
-  return ((Wrapper*) wrapper)->solver->decisions ();
+int64_t ccadical_decisions (CCaDiCaL *ptr) {
+  return ((Wrapper*) ptr)->solver->decisions ();
 }
 
-int64_t ccadical_restarts (CCaDiCaL *wrapper) {
-  return ((Wrapper*) wrapper)->solver->restarts ();
+int64_t ccadical_restarts (CCaDiCaL *ptr) {
+  return ((Wrapper*) ptr)->solver->restarts ();
 }
 
-int64_t ccadical_propagations (CCaDiCaL *wrapper) {
-  return ((Wrapper*) wrapper)->solver->propagations ();
-}
-
-int ccadical_fixed (CCaDiCaL *wrapper, int lit) {
-  return ((Wrapper*) wrapper)->solver->fixed (lit);
-}
-
-bool ccadical_active_lit (CCaDiCaL *wrapper, int lit) {
-  return ((Wrapper *) wrapper)->solver->active (lit);
+int64_t ccadical_propagations (CCaDiCaL *ptr) {
+  return ((Wrapper*) ptr)->solver->propagations ();
 }
 
 void ccadical_set_terminate (CCaDiCaL *ptr, void *state,
@@ -199,6 +191,14 @@ void ccadical_set_learn (CCaDiCaL *ptr, void *state, int max_length,
     wrapper->solver->disconnect_learner ();
 }
 
+int ccadical_fixed (CCaDiCaL *ptr, int lit) {
+  return ((Wrapper*) ptr)->solver->fixed (lit);
+}
+
+bool ccadical_is_active (CCaDiCaL *ptr, int lit) {
+  return ((Wrapper *) ptr)->solver->active (lit);
+}
+
 void ccadical_freeze (CCaDiCaL *ptr, int lit) {
   ((Wrapper *) ptr)->solver->freeze (lit);
 }
@@ -215,6 +215,14 @@ void ccadical_conclude (CCaDiCaL *ptr) {
   ((Wrapper *) ptr)->solver->conclude ();
 }
 
+bool ccadical_trace_proof (CCaDiCaL *ptr, const char *path) {
+  return ((Wrapper *) ptr)->solver->trace_proof (path);
+}
+
+void ccadical_close_proof (CCaDiCaL *ptr) {
+  ((Wrapper *) ptr)->solver->close_proof_trace ();
+}
+
 void ccadical_read_dimacs (CCaDiCaL *ptr, const char *path, int strict) {
   int vars;
   ((Wrapper *) ptr)->solver->read_dimacs (path, vars, strict);
@@ -222,14 +230,6 @@ void ccadical_read_dimacs (CCaDiCaL *ptr, const char *path, int strict) {
 
 void ccadical_write_dimacs(CCaDiCaL *ptr, const char *path) {
   ((Wrapper *) ptr)->solver->write_dimacs (path);
-}
-
-bool ccadical_trace_proof (CCaDiCaL *ptr, const char *path) {
-  return ((Wrapper *) ptr)->solver->trace_proof (path);
-}
-
-void ccadical_close_proof (CCaDiCaL *ptr) {
-  ((Wrapper *) ptr)->solver->close_proof_trace ();
 }
 
 void ccadical_propcheck_begin (CCaDiCaL *ptr) {

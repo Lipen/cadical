@@ -62,7 +62,7 @@ int64_t ccadical_decisions (CCaDiCaL *);
 int64_t ccadical_restarts (CCaDiCaL *);
 int64_t ccadical_propagations (CCaDiCaL *);
 int ccadical_fixed (CCaDiCaL *, int lit);
-bool ccadical_active_lit (CCaDiCaL *, int lit);
+bool ccadical_is_active (CCaDiCaL *, int lit);
 void ccadical_conclude (CCaDiCaL *);
 void ccadical_terminate (CCaDiCaL *);
 void ccadical_freeze (CCaDiCaL *, int lit);
