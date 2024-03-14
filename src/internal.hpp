@@ -1474,7 +1474,7 @@ inline bool score_smaller::operator() (unsigned a, unsigned b) {
 inline int External::fixed (int elit) const {
   assert (elit);
   assert (elit != INT_MIN);
-  int eidx = abs (elit);
+  const int eidx = abs (elit);
   if (eidx > max_var)
     return 0;
   int ilit = e2i[eidx];
