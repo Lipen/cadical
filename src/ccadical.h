@@ -56,6 +56,7 @@ void ccadical_close_proof (CCaDiCaL *);
 void ccadical_print_statistics (CCaDiCaL *);
 int64_t ccadical_vars (CCaDiCaL *);
 int64_t ccadical_active (CCaDiCaL *);
+int64_t ccadical_redundant (CCaDiCaL *);
 int64_t ccadical_irredundant (CCaDiCaL *);
 int64_t ccadical_conflicts (CCaDiCaL *);
 int64_t ccadical_decisions (CCaDiCaL *);

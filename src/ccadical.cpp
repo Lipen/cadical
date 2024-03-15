@@ -148,6 +148,10 @@ int64_t ccadical_active (CCaDiCaL *ptr) {
   return ((Wrapper *) ptr)->solver->active ();
 }
 
+int64_t ccadical_redundant (CCaDiCaL *ptr) {
+  return ((Wrapper *) ptr)->solver->redundant ();
+}
+
 int64_t ccadical_irredundant (CCaDiCaL *ptr) {
   return ((Wrapper *) ptr)->solver->irredundant ();
 }
