@@ -1489,9 +1489,12 @@ inline bool External::active (int elit) const {
   assert (elit);
   assert (elit != INT_MIN);
   const int eidx = abs (elit);
-  assert (eidx <= max_var);
+  assert (eidx <= max_var); // FIXME: remove this assert OR return the following return
+  if (eidx > max_var)
+    return false;
   int ilit = e2i[eidx];
-  assert (ilit);
+  if (!ilit)
+    return false;
   if (elit < 0)
     ilit = -ilit;
   return internal->active (ilit);
