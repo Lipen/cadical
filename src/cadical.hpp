@@ -916,6 +916,7 @@ public:
   void internal_assume_decision (int lit);
   void internal_backtrack (int new_level);
 
+  void add_unit_clause (int lit);
   void add_derived (int lit);
   //========================================================================
 

@@ -2024,6 +2024,28 @@ void Solver::internal_backtrack (int new_level) {
     internal->backtrack (new_level);
 }
 
+void Solver::add_unit_clause (int lit) {
+    assert (!internal->level);
+    const int ilit = external->internalize (lit);
+
+    int idx = internal->vidx (ilit);
+    assert (!internal->val (idx));
+    Var &v = internal->var (idx);
+    v.level = 0;
+    v.trail = (int) internal->trail.size ();
+    v.reason = 0;
+    assert ((int) internal->num_assigned < internal->max_var);
+    internal->num_assigned++;
+
+    internal->learn_unit_clause (ilit);
+
+    const signed char tmp = sign (ilit);
+    internal->set_val (idx, tmp);
+    assert (internal->val (ilit) > 0);
+    assert (internal->val (-ilit) < 0);
+    internal->trail.push_back (ilit);
+}
+
 void Solver::add_derived (int lit) {
   TRACE ("add_derived", lit);
   REQUIRE_VALID_STATE ();
