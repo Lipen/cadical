@@ -240,10 +240,10 @@ bool External::failed (int elit) {
   assert (elit != INT_MIN);
   int eidx = abs (elit);
   if (eidx > max_var)
-    return 0;
+    return false;
   int ilit = e2i[eidx];
   if (!ilit)
-    return 0;
+    return false;
   if (elit < 0)
     ilit = -ilit;
   return internal->failed (ilit);
