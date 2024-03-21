@@ -63,7 +63,6 @@ struct Wrapper : Learner, Terminator {
 
   std::vector<int> propcheck_assumptions;
   std::vector<int> propcheck_propagated;
-  uint64_t propcheck_num_propagated;
   std::vector<int> propcheck_all_tree_variables;
   std::vector<std::vector<int>> propcheck_all_tree_valid;
 
@@ -246,19 +245,16 @@ void ccadical_propcheck_add (CCaDiCaL *ptr, int lit) {
   wrapper->propcheck_assumptions.push_back (lit);
 }
 
-bool ccadical_propcheck (CCaDiCaL *ptr, bool restore, bool save) {
+bool ccadical_propcheck (CCaDiCaL *ptr, bool restore, bool save, uint64_t *num_propagated) {
   Wrapper *wrapper = (Wrapper *) ptr;
   wrapper->propcheck_propagated.clear();
+  bool res;
   if (save) {
-    return wrapper->solver->propcheck (wrapper->propcheck_assumptions, restore, &wrapper->propcheck_propagated, &wrapper->propcheck_num_propagated);
+    res = wrapper->solver->propcheck (wrapper->propcheck_assumptions, restore, &wrapper->propcheck_propagated, num_propagated);
   } else {
-    return wrapper->solver->propcheck (wrapper->propcheck_assumptions, restore, NULL, &wrapper->propcheck_num_propagated);
+    res = wrapper->solver->propcheck (wrapper->propcheck_assumptions, restore, NULL, num_propagated);
   }
-}
-
-uint64_t ccadical_propcheck_num_propagated (CCaDiCaL *ptr) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->propcheck_num_propagated;
+  return res;
 }
 
 size_t ccadical_propcheck_get_propagated_length (CCaDiCaL *ptr) {
