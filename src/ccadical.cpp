@@ -128,7 +128,7 @@ int ccadical_val (CCaDiCaL *ptr, int lit) {
   return ((Wrapper *) ptr)->solver->val (lit);
 }
 
-int ccadical_failed (CCaDiCaL *ptr, int lit) {
+bool ccadical_failed (CCaDiCaL *ptr, int lit) {
   return ((Wrapper *) ptr)->solver->failed (lit);
 }
 
@@ -211,7 +211,7 @@ void ccadical_melt (CCaDiCaL *ptr, int lit) {
   ((Wrapper *) ptr)->solver->melt (lit);
 }
 
-int ccadical_frozen (CCaDiCaL *ptr, int lit) {
+bool ccadical_frozen (CCaDiCaL *ptr, int lit) {
   return ((Wrapper *) ptr)->solver->frozen (lit);
 }
 

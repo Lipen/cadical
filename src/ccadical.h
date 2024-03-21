@@ -31,7 +31,7 @@ void ccadical_add (CCaDiCaL *, int lit);
 void ccadical_assume (CCaDiCaL *, int lit);
 int ccadical_solve (CCaDiCaL *);
 int ccadical_val (CCaDiCaL *, int lit);
-int ccadical_failed (CCaDiCaL *, int lit);
+bool ccadical_failed (CCaDiCaL *, int lit);
 
 void ccadical_set_terminate (CCaDiCaL *, void *state,
                              int (*terminate) (void *state));
@@ -67,7 +67,7 @@ bool ccadical_is_active (CCaDiCaL *, int lit);
 void ccadical_conclude (CCaDiCaL *);
 void ccadical_terminate (CCaDiCaL *);
 void ccadical_freeze (CCaDiCaL *, int lit);
-int ccadical_frozen (CCaDiCaL *, int lit);
+bool ccadical_frozen (CCaDiCaL *, int lit);
 void ccadical_melt (CCaDiCaL *, int lit);
 int ccadical_simplify (CCaDiCaL *);
 size_t ccadical_traverse_clauses(CCaDiCaL *, bool redundant DEFAULT_VALUE(false));
