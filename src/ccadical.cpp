@@ -131,6 +131,14 @@ bool ccadical_failed (CCaDiCaL *ptr, int lit) {
   return ((Wrapper *) ptr)->solver->failed (lit);
 }
 
+void ccadical_reset_assumptions (CCaDiCaL *ptr) {
+  ((Wrapper *) ptr)->solver->reset_assumptions ();
+}
+
+void ccadical_reset_constraint (CCaDiCaL *ptr) {
+  ((Wrapper *) ptr)->solver->reset_constraint ();
+}
+
 void ccadical_print_statistics (CCaDiCaL *ptr) {
   ((Wrapper *) ptr)->solver->statistics ();
 }
