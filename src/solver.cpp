@@ -1765,12 +1765,8 @@ bool Solver::propcheck (const std::vector<int> &assumptions, bool restore, std::
         }
 
         if (num_propagated) {
-            *num_propagated = 0;
-
             // Copy the trail:
-            for (size_t i = internal->control[level + 1].trail; i < internal->trail.size(); ++i) {
-                (*num_propagated)++;
-            }
+            *num_propagated = internal->trail.size () - internal->control[level + 1].trail;
 
             // If there was a conflict, push the conflicting literal as well:
             if (!no_conflict) {
