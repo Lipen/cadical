@@ -63,6 +63,7 @@ struct Wrapper : Learner, Terminator {
 
   std::vector<int> propcheck_assumptions;
   std::vector<int> propcheck_propagated;
+  std::vector<int> propcheck_core;
   std::vector<int> propcheck_all_tree_variables;
   std::vector<std::vector<int>> propcheck_all_tree_valid;
 
@@ -253,16 +254,19 @@ void ccadical_propcheck_add (CCaDiCaL *ptr, int lit) {
   wrapper->propcheck_assumptions.push_back (lit);
 }
 
-bool ccadical_propcheck (CCaDiCaL *ptr, bool restore, bool save, uint64_t *num_propagated) {
+bool ccadical_propcheck (CCaDiCaL *ptr, bool restore, uint64_t *num_propagated, bool save_propagated, bool save_core) {
   Wrapper *wrapper = (Wrapper *) ptr;
   wrapper->propcheck_propagated.clear();
-  bool res;
-  if (save) {
-    res = wrapper->solver->propcheck (wrapper->propcheck_assumptions, restore, &wrapper->propcheck_propagated, num_propagated);
-  } else {
-    res = wrapper->solver->propcheck (wrapper->propcheck_assumptions, restore, NULL, num_propagated);
+  wrapper->propcheck_core.clear();
+  std::vector<int> *propagated = 0;
+  std::vector<int> *core = 0;
+  if (save_propagated) {
+    propagated = &wrapper->propcheck_propagated;
   }
-  return res;
+  if (save_core) {
+    core = &wrapper->propcheck_core;
+  }
+  return wrapper->solver->propcheck (wrapper->propcheck_assumptions, restore, num_propagated, propagated, core);
 }
 
 size_t ccadical_propcheck_get_propagated_length (CCaDiCaL *ptr) {
@@ -274,6 +278,18 @@ void ccadical_propcheck_get_propagated (CCaDiCaL *ptr, int *out_propagated) {
   Wrapper *wrapper = (Wrapper *) ptr;
   for (size_t j = 0; j < wrapper->propcheck_propagated.size(); j++) {
     out_propagated[j] = wrapper->propcheck_propagated[j];
+  }
+}
+
+size_t ccadical_propcheck_get_core_length (CCaDiCaL *ptr) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  return wrapper->propcheck_core.size ();
+}
+
+void ccadical_propcheck_get_core (CCaDiCaL *ptr, int *out_core) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  for (size_t j = 0; j < wrapper->propcheck_core.size(); j++) {
+    out_core[j] = wrapper->propcheck_core[j];
   }
 }
 

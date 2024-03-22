@@ -83,9 +83,14 @@ void ccadical_clear_clauses(CCaDiCaL *);
 
 void ccadical_propcheck_begin (CCaDiCaL *);
 void ccadical_propcheck_add (CCaDiCaL *, int lit);
-bool ccadical_propcheck (CCaDiCaL *, bool restore DEFAULT_VALUE(true), bool save DEFAULT_VALUE(false), uint64_t *num_propagated DEFAULT_VALUE(NULL));
+bool ccadical_propcheck (CCaDiCaL *, bool restore DEFAULT_VALUE(true),
+    uint64_t *num_propagated DEFAULT_VALUE(NULL),
+    bool save_propagated DEFAULT_VALUE(false),
+    bool save_core DEFAULT_VALUE(false));
 size_t ccadical_propcheck_get_propagated_length (CCaDiCaL *);
 void ccadical_propcheck_get_propagated (CCaDiCaL *, int *out_propagated);
+size_t ccadical_propcheck_get_core_length (CCaDiCaL *);
+void ccadical_propcheck_get_core (CCaDiCaL *, int *out_core);
 
 /*------------------------------------------------------------------------*/
 

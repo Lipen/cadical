@@ -675,6 +675,7 @@ struct Internal {
   void remove_observed_var (int ilit);
   bool observed (int ilit) const;
   bool is_decision (int ilit);
+  bool is_decision_reason (Clause *reason) const;
   void check_watched_literal_invariants ();
   void set_tainted_literal ();
   void connect_propagator ();

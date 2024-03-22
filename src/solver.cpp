@@ -1684,7 +1684,12 @@ void Solver::error (const char *fmt, ...) {
   va_end (ap);
 }
 
-bool Solver::propcheck (const std::vector<int> &assumptions, bool restore, std::vector<int> *out_propagated, uint64_t *num_propagated) {
+bool Solver::propcheck (const std::vector<int> &assumptions,
+                        bool restore,
+                        uint64_t *num_propagated,
+                        std::vector<int> *out_propagated,
+                        std::vector<int> *out_core) {
+
     if (internal->unsat || internal->unsat_constraint) {
         std::cout << "Already unsat" << std::endl;
         return false;
@@ -1732,6 +1737,41 @@ bool Solver::propcheck (const std::vector<int> &assumptions, bool restore, std::
         } else if (b < 0) {
             // Conflict during assignment.
             no_conflicting_assignment = false;
+
+            // Extract unsat core in terms of 'assumptions':
+            if (out_core) {
+                // Add the conflicting literal (note: 'lit' is external here) to the core:
+                out_core->push_back (lit);
+
+                const int lit = -ilit;
+                Flags &f = internal->flags (lit);
+                f.seen = true;
+
+                const auto& t = &internal->trail;
+                int i = t->size ();
+
+                while (i > 0) {
+                    const int lit = (*t)[--i];
+                    Flags &f = internal->flags (lit);
+                    if (!f.seen) continue;
+
+                    Clause *reason = internal->var (lit).reason;
+                    if (internal->is_decision_reason (reason)) {
+                        assert(internal->var (lit).level > 0);
+                        out_core->push_back (internal->externalize (lit));
+                    } else if (reason) {
+                        // "Expand" reason:
+                        for (const auto &other : *reason)
+                            if (other != lit)
+                                if (internal->var (other).level > 0)
+                                    internal->flags (other).seen = true;
+                    }
+                    f.seen = false;
+                }
+
+                f.seen = false;
+            }
+
             break;
         } else {
             // Assign and propagate the assumption:
@@ -1739,8 +1779,36 @@ bool Solver::propcheck (const std::vector<int> &assumptions, bool restore, std::
             if (!internal->propagate ()) {
                 // Conflict.
                 no_conflict = false;
-                // internal->conflict = 0;
-                // internal->analyze ();
+
+                // Extract unsat core in terms of 'assumptions':
+                if (out_core) {
+                    for (const auto &lit : *internal->conflict) {
+                        internal->flags (lit).seen = true;
+                    }
+
+                    const auto& t = &internal->trail;
+                    int i = t->size ();
+
+                    while (i > 0) {
+                        const int lit = (*t)[--i];
+                        Flags &f = internal->flags (lit);
+                        if (!f.seen) continue;
+
+                        Clause *reason = internal->var (lit).reason;
+                        if (!reason || internal->is_decision_reason (reason)) {
+                            assert(internal->var (lit).level > 0);
+                            out_core->push_back (internal->externalize (lit));
+                        } else {
+                            // "Expand" reason:
+                            for (const auto &other : *reason)
+                                if (other != lit)
+                                    if (internal->var (other).level > 0)
+                                        internal->flags (other).seen = true;
+                        }
+                        f.seen = false;
+                    }
+                }
+
                 break;
             }
         }
