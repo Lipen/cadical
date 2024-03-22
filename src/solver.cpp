@@ -1795,10 +1795,10 @@ bool Solver::propcheck (const std::vector<int> &assumptions,
                         if (!f.seen) continue;
 
                         Clause *reason = internal->var (lit).reason;
-                        if (!reason || internal->is_decision_reason (reason)) {
+                        if (internal->is_decision_reason (reason)) {
                             assert(internal->var (lit).level > 0);
                             out_core->push_back (internal->externalize (lit));
-                        } else {
+                        } else if (reason) {
                             // "Expand" reason:
                             for (const auto &other : *reason)
                                 if (other != lit)
