@@ -913,6 +913,8 @@ public:
                   std::vector<int> *out_core = 0);
   uint64_t propcheck_all_tree (const std::vector<int> &variables, uint64_t limit, std::vector<std::vector<int>> *out_valid = 0);
 
+  void extract_core(std::vector<int> &core);
+
   bool internal_propagate ();
   void internal_reset_conflict ();
   int internal_level () const;

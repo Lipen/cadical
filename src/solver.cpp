@@ -1684,6 +1684,49 @@ void Solver::error (const char *fmt, ...) {
   va_end (ap);
 }
 
+inline void Solver::extract_core(std::vector<int> &core) {
+    // std::cout << "trail: [";
+    // for (size_t j = 0; j < internal->trail.size (); ++j) {
+    //     if (j > 0) std::cout << ", ";
+    //     const int lit = internal->trail[j];
+    //     std::cout << internal->externalize (lit) << "@" << internal->var (lit).level;
+    // }
+    // std::cout << "]" << std::endl;
+
+    const auto& t = &internal->trail;
+    int i = t->size ();
+
+    while (i > 0) {
+        const int lit = (*t)[--i];
+        Flags &f = internal->flags (lit);
+        if (!f.seen) continue;
+
+        Clause *reason = internal->var (lit).reason;
+        if (reason) {
+            // std::cout << "reason of " << internal->externalize (lit) << ": [";
+            // bool first = true;
+            // for (const auto &lit : *reason) {
+            //     if (!first) std::cout << ", ";
+            //     first = false;
+            //     std::cout << internal->externalize (lit);
+            // }
+            // std::cout << "]" << std::endl;
+
+            // "Expand" reason:
+            for (const auto &other : *reason)
+                if (other != lit)
+                    if (internal->var (other).level > 0)
+                        internal->flags (other).seen = true;
+        } else {
+            // std::cout << "decision " << internal->externalize (lit) << std::endl;
+            assert(internal->var (lit).level > 0);
+            core.push_back (internal->externalize (lit));
+        }
+
+        f.seen = false;
+    }
+}
+
 bool Solver::propcheck (const std::vector<int> &assumptions,
                         bool restore,
                         uint64_t *num_propagated,
@@ -1738,6 +1781,8 @@ bool Solver::propcheck (const std::vector<int> &assumptions,
             // Conflict during assignment.
             no_conflicting_assignment = false;
 
+            // std::cout << "Conflict during assignment of " << lit << std::endl;
+
             // Extract unsat core in terms of 'assumptions':
             if (out_core) {
                 // Add the conflicting literal (note: 'lit' is external here) to the core:
@@ -1747,27 +1792,7 @@ bool Solver::propcheck (const std::vector<int> &assumptions,
                 Flags &f = internal->flags (lit);
                 f.seen = true;
 
-                const auto& t = &internal->trail;
-                int i = t->size ();
-
-                while (i > 0) {
-                    const int lit = (*t)[--i];
-                    Flags &f = internal->flags (lit);
-                    if (!f.seen) continue;
-
-                    Clause *reason = internal->var (lit).reason;
-                    if (internal->is_decision_reason (reason)) {
-                        assert(internal->var (lit).level > 0);
-                        out_core->push_back (internal->externalize (lit));
-                    } else if (reason) {
-                        // "Expand" reason:
-                        for (const auto &other : *reason)
-                            if (other != lit)
-                                if (internal->var (other).level > 0)
-                                    internal->flags (other).seen = true;
-                    }
-                    f.seen = false;
-                }
+                extract_core(*out_core);
 
                 f.seen = false;
             }
@@ -1776,37 +1801,29 @@ bool Solver::propcheck (const std::vector<int> &assumptions,
         } else {
             // Assign and propagate the assumption:
             internal->search_assume_decision (ilit);
+            assert(!internal->var (ilit).reason);
             if (!internal->propagate ()) {
                 // Conflict.
                 no_conflict = false;
 
+                // std::cout << "Conflict during propagation" << std::endl;
+
                 // Extract unsat core in terms of 'assumptions':
                 if (out_core) {
+                    // std::cout << "conflict: [";
+                    // bool first = true;
+                    // for (const auto &lit : *internal->conflict) {
+                    //     if (!first) std::cout << ", ";
+                    //     first = false;
+                    //     std::cout << internal->externalize (lit);
+                    // }
+                    // std::cout << "]" << std::endl;
+
                     for (const auto &lit : *internal->conflict) {
                         internal->flags (lit).seen = true;
                     }
 
-                    const auto& t = &internal->trail;
-                    int i = t->size ();
-
-                    while (i > 0) {
-                        const int lit = (*t)[--i];
-                        Flags &f = internal->flags (lit);
-                        if (!f.seen) continue;
-
-                        Clause *reason = internal->var (lit).reason;
-                        if (internal->is_decision_reason (reason)) {
-                            assert(internal->var (lit).level > 0);
-                            out_core->push_back (internal->externalize (lit));
-                        } else if (reason) {
-                            // "Expand" reason:
-                            for (const auto &other : *reason)
-                                if (other != lit)
-                                    if (internal->var (other).level > 0)
-                                        internal->flags (other).seen = true;
-                        }
-                        f.seen = false;
-                    }
+                    extract_core(*out_core);
                 }
 
                 break;

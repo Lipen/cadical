@@ -22,10 +22,6 @@ namespace CaDiCaL {
 static Clause decision_reason_clause;
 static Clause *decision_reason = &decision_reason_clause;
 
-bool Internal::is_decision_reason (Clause *reason) const {
-  return reason == decision_reason;
-}
-
 // If chronological backtracking is used the actual assignment level might
 // be lower than the current decision level. In this case the assignment
 // level is defined as the maximum level of the literals in the reason
