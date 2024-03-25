@@ -1719,8 +1719,10 @@ inline void Solver::extract_core(std::vector<int> &core) {
                         internal->flags (other).seen = true;
         } else {
             // std::cout << "decision " << internal->externalize (lit) << std::endl;
-            assert(internal->var (lit).level > 0);
-            core.push_back (internal->externalize (lit));
+
+            // assert(internal->var (lit).level > 0);
+            if (internal->var (lit).level > 0)
+              core.push_back (internal->externalize (lit));
         }
 
         f.seen = false;
