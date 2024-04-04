@@ -54,6 +54,7 @@ void ccadical_write_dimacs (CCaDiCaL *, const char *path);
 bool ccadical_trace_proof (CCaDiCaL *, const char *path);
 void ccadical_close_proof (CCaDiCaL *);
 void ccadical_print_statistics (CCaDiCaL *);
+void ccadical_print_resources (CCaDiCaL *);
 int64_t ccadical_vars (CCaDiCaL *);
 int64_t ccadical_active (CCaDiCaL *);
 int64_t ccadical_redundant (CCaDiCaL *);

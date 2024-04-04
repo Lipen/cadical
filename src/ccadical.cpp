@@ -144,6 +144,10 @@ void ccadical_print_statistics (CCaDiCaL *ptr) {
   ((Wrapper *) ptr)->solver->statistics ();
 }
 
+void ccadical_print_resources (CCaDiCaL *ptr) {
+  ((Wrapper *) ptr)->solver->resources ();
+}
+
 void ccadical_terminate (CCaDiCaL *ptr) {
   ((Wrapper *) ptr)->solver->terminate ();
 }
