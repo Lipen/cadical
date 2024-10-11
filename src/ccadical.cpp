@@ -9,6 +9,7 @@ namespace CaDiCaL {
 struct Wrapper : Learner, Terminator {
 
   Solver *solver;
+
   struct {
     void *state;
     int (*function) (void *);
@@ -17,9 +18,9 @@ struct Wrapper : Learner, Terminator {
   struct {
     void *state;
     int max_length;
-    int *begin_clause, *end_clause, *capacity_clause;
     void (*function) (void *, int *);
   } learner;
+  std::vector<int> clause; // learnt clause, 0-terminated
 
   bool terminate () {
     if (!terminator.function)
@@ -30,23 +31,16 @@ struct Wrapper : Learner, Terminator {
   bool learning (int size) {
     if (!learner.function)
       return false;
+    if (!learner.max_length)
+      return true;
     return size <= learner.max_length;
   }
 
   void learn (int lit) {
-    if (learner.end_clause == learner.capacity_clause) {
-      size_t count = learner.end_clause - learner.begin_clause;
-      size_t size = count ? 2 * count : 1;
-      learner.begin_clause =
-          (int *) realloc (learner.begin_clause, size * sizeof (int));
-      learner.end_clause = learner.begin_clause + count;
-      learner.capacity_clause = learner.begin_clause + size;
-    }
-    *learner.end_clause++ = lit;
-    if (lit)
-      return;
-    learner.function (learner.state, learner.begin_clause);
-    learner.end_clause = learner.begin_clause;
+    clause.push_back (lit);
+    if (lit) return;
+    learner.function (learner.state, clause.data ());
+    clause.clear ();
   }
 
   Wrapper () : solver (new Solver ()) {
@@ -56,8 +50,6 @@ struct Wrapper : Learner, Terminator {
 
   ~Wrapper () {
     terminator.function = 0;
-    if (learner.begin_clause)
-      free (learner.begin_clause);
     delete solver;
   }
 
