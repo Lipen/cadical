@@ -11,14 +11,14 @@ struct Wrapper : Learner, Terminator {
   Solver *solver;
 
   struct {
-    void *state;
-    int (*function) (void *);
+    void *state = nullptr;
+    int (*function) (void *) = nullptr;
   } terminator;
 
   struct {
-    void *state;
-    int max_length;
-    void (*function) (void *, int *);
+    void *state = nullptr;
+    void (*function) (void *, int *) = nullptr;
+    int max_length = 0;
   } learner;
   std::vector<int> clause; // learnt clause, 0-terminated
 
@@ -43,10 +43,7 @@ struct Wrapper : Learner, Terminator {
     clause.clear ();
   }
 
-  Wrapper () : solver (new Solver ()) {
-    memset (&terminator, 0, sizeof terminator);
-    memset (&learner, 0, sizeof learner);
-  }
+  Wrapper () : solver (new Solver ()) {}
 
   ~Wrapper () {
     terminator.function = 0;
