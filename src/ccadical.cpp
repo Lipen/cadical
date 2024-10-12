@@ -20,7 +20,7 @@ struct Wrapper : Learner, Terminator {
     void (*function) (void *, int *) = nullptr;
     int max_length = 0;
   } learner;
-  std::vector<int> clause; // learnt clause, 0-terminated
+  std::vector<int> learnt_clause; // 0-terminated when `function` is called
 
   bool terminate () {
     if (!terminator.function)
@@ -37,10 +37,10 @@ struct Wrapper : Learner, Terminator {
   }
 
   void learn (int lit) {
-    clause.push_back (lit);
+    learnt_clause.push_back (lit);
     if (lit) return;
-    learner.function (learner.state, clause.data ());
-    clause.clear ();
+    learner.function (learner.state, learnt_clause.data ());
+    learnt_clause.clear ();
   }
 
   Wrapper () : solver (new Solver ()) {}
