@@ -329,6 +329,7 @@ class ClauseCloner : public ClauseIterator {
 
 public:
   ClauseCloner (std::vector<std::vector<int>> &d) : dest (d) {}
+
   bool clause (const std::vector<int> &c) {
     dest.push_back (c);
     return true;
