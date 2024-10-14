@@ -336,7 +336,7 @@ public:
   }
 };
 
-size_t ccadical_traverse_clauses(CCaDiCaL *ptr, bool redundant) {
+size_t ccadical_traverse_clauses_clone(CCaDiCaL *ptr, bool redundant) {
   Wrapper *wrapper = (Wrapper *) ptr;
   wrapper->clauses.clear ();
   ClauseCloner cloner (wrapper->clauses);
@@ -364,6 +364,25 @@ void ccadical_get_clause (CCaDiCaL *ptr, size_t i, int *out_clause) {
 void ccadical_clear_clauses (CCaDiCaL *ptr) {
   Wrapper *wrapper = (Wrapper *) ptr;
   wrapper->clauses.clear ();
+}
+
+class ClauseCb : public ClauseIterator {
+  ClauseCallback cb;
+  void *user_data;
+
+public:
+  ClauseCb (ClauseCallback cb, void *user_data)
+    : cb (cb), user_data (user_data) {}
+
+  bool clause (const std::vector<int> &c) {
+    return cb (c.data (), c.size (), user_data);
+  }
+};
+
+void ccadical_traverse_clauses (CCaDiCaL *ptr, ClauseCallback cb, void *user_data) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  ClauseCb it (cb, user_data);
+  wrapper->solver->traverse_clauses (it);
 }
 
 bool ccadical_internal_propagate (CCaDiCaL *ptr) {
