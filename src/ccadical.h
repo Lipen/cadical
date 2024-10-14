@@ -79,7 +79,7 @@ void ccadical_get_clause (CCaDiCaL *, size_t i, int *out_clause);
 void ccadical_clear_clauses (CCaDiCaL *);
 
 typedef bool (*ClauseCallback) (const int *clause, size_t, void *user_data);
-void ccadical_traverse_clauses (CCaDiCaL *, ClauseCallback cb, void *user_data);
+bool ccadical_traverse_clauses (CCaDiCaL *, ClauseCallback cb, void *user_data);
 
 /*------------------------------------------------------------------------*/
 

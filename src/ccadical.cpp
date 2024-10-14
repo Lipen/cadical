@@ -379,10 +379,10 @@ public:
   }
 };
 
-void ccadical_traverse_clauses (CCaDiCaL *ptr, ClauseCallback cb, void *user_data) {
+bool ccadical_traverse_clauses (CCaDiCaL *ptr, ClauseCallback cb, void *user_data) {
   Wrapper *wrapper = (Wrapper *) ptr;
   ClauseCb it (cb, user_data);
-  wrapper->solver->traverse_clauses (it);
+  return wrapper->solver->traverse_clauses (it);
 }
 
 bool ccadical_internal_propagate (CCaDiCaL *ptr) {
