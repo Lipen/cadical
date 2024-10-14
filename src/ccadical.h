@@ -73,10 +73,10 @@ void ccadical_melt (CCaDiCaL *, int lit);
 int ccadical_simplify (CCaDiCaL *);
 void ccadical_reset_assumptions (CCaDiCaL *);
 void ccadical_reset_constraint (CCaDiCaL *);
-size_t ccadical_traverse_clauses(CCaDiCaL *, bool redundant DEFAULT_VALUE(false));
+size_t ccadical_traverse_clauses (CCaDiCaL *, bool redundant DEFAULT_VALUE(false));
 size_t ccadical_get_clause_length (CCaDiCaL *, size_t i);
 void ccadical_get_clause (CCaDiCaL *, size_t i, int *out_clause);
-void ccadical_clear_clauses(CCaDiCaL *);
+void ccadical_clear_clauses (CCaDiCaL *);
 
 /*------------------------------------------------------------------------*/
 
