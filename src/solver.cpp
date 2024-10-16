@@ -1836,7 +1836,7 @@ bool Solver::propcheck (const std::vector<int> &assumptions,
     }
 
     // Save the original decision level:
-    int level = internal->level;
+    int orig_level = internal->level;
 
     bool no_conflicting_assignment = true;
     bool no_conflict = true;
@@ -1900,10 +1900,10 @@ bool Solver::propcheck (const std::vector<int> &assumptions,
         }
     }
 
-    if (internal->level > level) {
+    if (internal->level > orig_level) {
         if (out_propagated) {
             // Copy the trail:
-            for (size_t i = internal->control[level + 1].trail; i < internal->trail.size(); ++i) {
+            for (size_t i = internal->control[orig_level + 1].trail; i < internal->trail.size(); ++i) {
                 const int ilit = internal->trail[i];
                 const int elit = internal->externalize (ilit);
                 out_propagated->push_back (elit);
@@ -1920,7 +1920,7 @@ bool Solver::propcheck (const std::vector<int> &assumptions,
 
         if (num_propagated) {
             // Copy the trail:
-            *num_propagated = internal->trail.size () - internal->control[level + 1].trail;
+            *num_propagated = internal->trail.size () - internal->control[orig_level + 1].trail;
 
             // If there was a conflict, push the conflicting literal as well:
             if (!no_conflict) {
@@ -1929,7 +1929,7 @@ bool Solver::propcheck (const std::vector<int> &assumptions,
         }
 
         // Backtrack to the original decision level:
-        internal->backtrack (level);
+        internal->backtrack (orig_level);
     }
 
     // Restore:
