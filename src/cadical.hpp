@@ -931,6 +931,8 @@ public:
 
   //==== additional methods ================================================
 
+  void extract_core (std::vector<int> &core);
+
   bool propcheck (
     const std::vector<int> &assumptions,
     bool restore = true,
@@ -945,8 +947,6 @@ public:
     SliceCallback on_valid = nullptr,
     void *user_data_valid = nullptr
   );
-
-  void extract_core (std::vector<int> &core);
 
   bool internal_propagate ();
   void internal_reset_conflict ();

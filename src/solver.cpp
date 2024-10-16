@@ -1789,7 +1789,7 @@ inline void Solver::extract_core(std::vector<int> &core) {
 
             // assert(internal->var (lit).level > 0);
             if (internal->var (lit).level > 0)
-              core.push_back (internal->externalize (lit));
+                core.push_back (internal->externalize (lit));
         }
 
         f.seen = false;
