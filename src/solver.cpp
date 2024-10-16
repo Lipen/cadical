@@ -1943,11 +1943,15 @@ bool Solver::propcheck (const std::vector<int> &assumptions,
     return no_conflict && no_conflicting_assignment;
 }
 
-uint64_t Solver::propcheck_all_tree (const vector<int>& variables, uint64_t limit, vector<vector<int>> *out_valid) {
+uint64_t Solver::propcheck_all_tree (
+    const vector<int>& variables,
+    uint64_t limit,
+    SliceCallback on_valid, void *user_data_valid
+) {
     assert(internal->conflict == 0);
 
     // TODO: move to arguments
-    bool verb = false;
+    const bool verb = false;
 
     if (internal->unsat || internal->unsat_constraint) {
         std::cout << "Already unsat" << std::endl;
@@ -2002,9 +2006,6 @@ uint64_t Solver::propcheck_all_tree (const vector<int>& variables, uint64_t limi
 
     // Number of valid cubes:
     uint64_t total = 0;
-    if (out_valid) {
-        out_valid->clear();
-    }
 
     // Number of propagations:
     uint64_t checked = 0;
@@ -2023,13 +2024,13 @@ uint64_t Solver::propcheck_all_tree (const vector<int>& variables, uint64_t limi
         if (state == 0) { // Descending
             if (internal->level == (int)variables.size()) {
                 total++;
-                if (out_valid) {
+                if (on_valid) {
                     vector<int> out_cube;
                     for (size_t i = 0; i < variables.size(); i++) {
                         int lit = cube[i] * variables[i];
                         out_cube.push_back(lit);
                     }
-                    out_valid->push_back(out_cube);
+                    on_valid(out_cube.data(), out_cube.size(), user_data_valid);
                 }
                 if (verb) std::cout << "total++ = " << total << std::endl;
                 if (limit && total >= limit) {

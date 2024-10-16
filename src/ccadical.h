@@ -73,39 +73,38 @@ void ccadical_melt (CCaDiCaL *, int lit);
 int ccadical_simplify (CCaDiCaL *);
 void ccadical_reset_assumptions (CCaDiCaL *);
 void ccadical_reset_constraint (CCaDiCaL *);
-size_t ccadical_traverse_clauses_clone (CCaDiCaL *, bool redundant DEFAULT_VALUE(false));
-size_t ccadical_get_clause_length (CCaDiCaL *, size_t i);
-void ccadical_get_clause (CCaDiCaL *, size_t i, int *out_clause);
-void ccadical_clear_clauses (CCaDiCaL *);
 
 typedef bool (*ClauseCallback) (const int *clause, size_t, void *user_data);
-bool ccadical_traverse_clauses (CCaDiCaL *, ClauseCallback cb, void *user_data);
+bool ccadical_traverse_clauses (CCaDiCaL *, bool redundant, ClauseCallback, void *user_data);
 
 /*------------------------------------------------------------------------*/
 
 // Propcheck
 
-void ccadical_propcheck_begin (CCaDiCaL *);
-void ccadical_propcheck_add (CCaDiCaL *, int lit);
-bool ccadical_propcheck (CCaDiCaL *, bool restore DEFAULT_VALUE(true),
-    uint64_t *num_propagated DEFAULT_VALUE(NULL),
+bool ccadical_propcheck (CCaDiCaL *,
+    const int *assumptions, size_t,
+    bool restore DEFAULT_VALUE(true),
+    uint64_t *num_propagated DEFAULT_VALUE(nullptr),
     bool save_propagated DEFAULT_VALUE(false),
-    bool save_core DEFAULT_VALUE(false));
-size_t ccadical_propcheck_get_propagated_length (CCaDiCaL *);
-void ccadical_propcheck_get_propagated (CCaDiCaL *, int *out_propagated);
-size_t ccadical_propcheck_get_core_length (CCaDiCaL *);
-void ccadical_propcheck_get_core (CCaDiCaL *, int *out_core);
+    bool save_core DEFAULT_VALUE(false)
+);
+const int *ccadical_propcheck_get_propagated (CCaDiCaL *, size_t *);
+const int *ccadical_propcheck_get_core (CCaDiCaL *, size_t *);
 
 /*------------------------------------------------------------------------*/
 
 // Propcheck-tree
 
-void ccadical_propcheck_all_tree_begin (CCaDiCaL *);
-void ccadical_propcheck_all_tree_add (CCaDiCaL *, int v);
-uint64_t ccadical_propcheck_all_tree (CCaDiCaL *, uint64_t limit, bool save DEFAULT_VALUE(false));
-size_t ccadical_propcheck_all_tree_get_valid_length (CCaDiCaL *);
-size_t ccadical_propcheck_all_tree_get_cube_length (CCaDiCaL *, size_t i);
-void ccadical_propcheck_all_tree_get_cube (CCaDiCaL *, size_t i, int *out_cube);
+// TODO: place `SliceCallback` in a common place, currently it is duplicated in `cadical.hpp`
+typedef void (*SliceCallback) (const int *, size_t, void *user_data);
+
+uint64_t ccadical_propcheck_all_tree (
+    CCaDiCaL *,
+    const int *variables, size_t,
+    uint64_t limit,
+    SliceCallback on_valid DEFAULT_VALUE(nullptr),
+    void *user_data_valid DEFAULT_VALUE(nullptr)
+);
 
 /*------------------------------------------------------------------------*/
 

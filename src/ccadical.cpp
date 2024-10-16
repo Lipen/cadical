@@ -19,8 +19,8 @@ struct Wrapper : Learner, Terminator {
     void *state = nullptr;
     void (*function) (void *, int *) = nullptr;
     int max_length = 0;
+    std::vector<int> clause; // learnt clause, 0-terminated when `function` is called
   } learner;
-  std::vector<int> learnt_clause; // 0-terminated when `function` is called
 
   bool terminate () {
     if (!terminator.function)
@@ -37,10 +37,10 @@ struct Wrapper : Learner, Terminator {
   }
 
   void learn (int lit) {
-    learnt_clause.push_back (lit);
+    learner.clause.push_back (lit);
     if (lit) return;
-    learner.function (learner.state, learnt_clause.data ());
-    learnt_clause.clear ();
+    learner.function (learner.state, learner.clause.data ());
+    learner.clause.clear ();
   }
 
   Wrapper () : solver (new Solver ()) {}
@@ -50,13 +50,8 @@ struct Wrapper : Learner, Terminator {
     delete solver;
   }
 
-  std::vector<int> propcheck_assumptions;
   std::vector<int> propcheck_propagated;
   std::vector<int> propcheck_core;
-  std::vector<int> propcheck_all_tree_variables;
-  std::vector<std::vector<int>> propcheck_all_tree_valid;
-
-  std::vector<std::vector<int>> clauses;
 };
 
 } // namespace CaDiCaL
@@ -237,141 +232,57 @@ void ccadical_write_dimacs(CCaDiCaL *ptr, const char *path) {
   ((Wrapper *) ptr)->solver->write_dimacs (path);
 }
 
-void ccadical_propcheck_begin (CCaDiCaL *ptr) {
+bool ccadical_propcheck (
+  CCaDiCaL *ptr,
+  const int *lits, size_t size,
+  bool restore,
+  uint64_t *num_propagated,
+  bool save_propagated,
+  bool save_core
+) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  wrapper->propcheck_assumptions.clear();
-}
-
-void ccadical_propcheck_add (CCaDiCaL *ptr, int lit) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  wrapper->propcheck_assumptions.push_back (lit);
-}
-
-bool ccadical_propcheck (CCaDiCaL *ptr, bool restore, uint64_t *num_propagated, bool save_propagated, bool save_core) {
-  Wrapper *wrapper = (Wrapper *) ptr;
+  const std::vector<int> assumptions (lits, lits + size);
   wrapper->propcheck_propagated.clear();
   wrapper->propcheck_core.clear();
-  std::vector<int> *propagated = 0;
-  std::vector<int> *core = 0;
-  if (save_propagated) {
+  std::vector<int> *propagated = nullptr;
+  std::vector<int> *core = nullptr;
+  if (save_propagated)
     propagated = &wrapper->propcheck_propagated;
-  }
-  if (save_core) {
+  if (save_core)
     core = &wrapper->propcheck_core;
-  }
-  return wrapper->solver->propcheck (wrapper->propcheck_assumptions, restore, num_propagated, propagated, core);
+  return wrapper->solver->propcheck (assumptions, restore, num_propagated, propagated, core);
 }
 
-size_t ccadical_propcheck_get_propagated_length (CCaDiCaL *ptr) {
+const int *ccadical_get_propagated (CCaDiCaL *ptr, size_t *size) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->propcheck_propagated.size ();
+  *size = wrapper->propcheck_propagated.size ();
+  return wrapper->propcheck_propagated.data ();
 }
 
-void ccadical_propcheck_get_propagated (CCaDiCaL *ptr, int *out_propagated) {
+const int *ccadical_propcheck_get_core (CCaDiCaL *ptr, size_t *size) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  for (size_t j = 0; j < wrapper->propcheck_propagated.size(); j++) {
-    out_propagated[j] = wrapper->propcheck_propagated[j];
-  }
+  *size = wrapper->propcheck_core.size ();
+  return wrapper->propcheck_core.data ();
 }
 
-size_t ccadical_propcheck_get_core_length (CCaDiCaL *ptr) {
+uint64_t ccadical_propcheck_all_tree (
+  CCaDiCaL *ptr,
+  const int *lits, size_t size,
+  uint64_t limit,
+  SliceCallback on_valid,
+  void *user_data_valid
+) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->propcheck_core.size ();
+  const std::vector<int> variables (lits, lits + size);
+  return wrapper->solver->propcheck_all_tree (variables, limit, on_valid, user_data_valid);
 }
 
-void ccadical_propcheck_get_core (CCaDiCaL *ptr, int *out_core) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  for (size_t j = 0; j < wrapper->propcheck_core.size(); j++) {
-    out_core[j] = wrapper->propcheck_core[j];
-  }
-}
-
-void ccadical_propcheck_all_tree_begin (CCaDiCaL *ptr) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  wrapper->propcheck_all_tree_variables.clear ();
-}
-
-void ccadical_propcheck_all_tree_add (CCaDiCaL *ptr, int v) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  wrapper->propcheck_all_tree_variables.push_back (v);
-}
-
-uint64_t ccadical_propcheck_all_tree (CCaDiCaL *ptr, uint64_t limit, bool save) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  wrapper->propcheck_all_tree_valid.clear ();
-  if (save) {
-    return wrapper->solver->propcheck_all_tree (wrapper->propcheck_all_tree_variables, limit, &wrapper->propcheck_all_tree_valid);
-  } else {
-    return wrapper->solver->propcheck_all_tree (wrapper->propcheck_all_tree_variables, limit, NULL);
-  }
-}
-
-size_t ccadical_propcheck_all_tree_get_valid_length (CCaDiCaL *ptr) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->propcheck_all_tree_valid.size ();
-}
-
-size_t ccadical_propcheck_all_tree_get_cube_length (CCaDiCaL * ptr, size_t i) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->propcheck_all_tree_valid[i].size ();
-}
-
-void ccadical_propcheck_all_tree_get_cube (CCaDiCaL *ptr, size_t i, int *out_cube) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  const std::vector<int> &cube = wrapper->propcheck_all_tree_valid[i];
-  for (size_t j = 0; j < cube.size(); j++) {
-    out_cube[j] = cube[j];
-  }
-}
-
-class ClauseCloner : public ClauseIterator {
-  std::vector<std::vector<int>> &dest;
-
-public:
-  ClauseCloner (std::vector<std::vector<int>> &d) : dest (d) {}
-
-  bool clause (const std::vector<int> &c) {
-    dest.push_back (c);
-    return true;
-  }
-};
-
-size_t ccadical_traverse_clauses_clone(CCaDiCaL *ptr, bool redundant) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  wrapper->clauses.clear ();
-  ClauseCloner cloner (wrapper->clauses);
-  if (redundant) {
-    wrapper->solver->traverse_all_clauses (cloner);
-  } else {
-    wrapper->solver->traverse_clauses (cloner);
-  }
-  return wrapper->clauses.size ();
-}
-
-size_t ccadical_get_clause_length (CCaDiCaL *ptr, size_t i) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  return wrapper->clauses[i].size ();
-}
-
-void ccadical_get_clause (CCaDiCaL *ptr, size_t i, int *out_clause) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  const std::vector<int> &clause = wrapper->clauses[i];
-  for (size_t j = 0; j < clause.size(); j++) {
-    out_clause[j] = clause[j];
-  }
-}
-
-void ccadical_clear_clauses (CCaDiCaL *ptr) {
-  Wrapper *wrapper = (Wrapper *) ptr;
-  wrapper->clauses.clear ();
-}
-
-class ClauseCb : public ClauseIterator {
+class ClauseCallbackIterator : public ClauseIterator {
   ClauseCallback cb;
   void *user_data;
 
 public:
-  ClauseCb (ClauseCallback cb, void *user_data)
+  ClauseCallbackIterator (ClauseCallback cb, void *user_data)
     : cb (cb), user_data (user_data) {}
 
   bool clause (const std::vector<int> &c) {
@@ -379,10 +290,13 @@ public:
   }
 };
 
-bool ccadical_traverse_clauses (CCaDiCaL *ptr, ClauseCallback cb, void *user_data) {
+bool ccadical_traverse_clauses (CCaDiCaL *ptr, bool redundant, ClauseCallback cb, void *user_data) {
   Wrapper *wrapper = (Wrapper *) ptr;
-  ClauseCb it (cb, user_data);
-  return wrapper->solver->traverse_clauses (it);
+  ClauseCallbackIterator it (cb, user_data);
+  if (redundant)
+    return wrapper->solver->traverse_all_clauses (it);
+  else
+    return wrapper->solver->traverse_clauses (it);
 }
 
 bool ccadical_internal_propagate (CCaDiCaL *ptr) {

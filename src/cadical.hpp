@@ -217,6 +217,10 @@ class StatTracer;
 
 /*------------------------------------------------------------------------*/
 
+typedef void (*SliceCallback) (const int *, size_t, void *user_data);
+
+/*------------------------------------------------------------------------*/
+
 class Solver {
 
 public:
@@ -925,15 +929,24 @@ public:
   //
   static void build (FILE *file, const char *prefix = "c ");
 
-  //==== Additional methods ================================================
-  bool propcheck (const std::vector<int> &assumptions,
-                  bool restore = true,
-                  uint64_t *num_propagated = 0,
-                  std::vector<int> *out_propagated = 0,
-                  std::vector<int> *out_core = 0);
-  uint64_t propcheck_all_tree (const std::vector<int> &variables, uint64_t limit, std::vector<std::vector<int>> *out_valid = 0);
+  //==== additional methods ================================================
 
-  void extract_core(std::vector<int> &core);
+  bool propcheck (
+    const std::vector<int> &assumptions,
+    bool restore = true,
+    uint64_t *num_propagated = nullptr,
+    std::vector<int> *out_propagated = nullptr,
+    std::vector<int> *out_core = nullptr
+  );
+
+  uint64_t propcheck_all_tree (
+    const std::vector<int> &variables,
+    uint64_t limit,
+    SliceCallback on_valid = nullptr,
+    void *user_data_valid = nullptr
+  );
+
+  void extract_core (std::vector<int> &core);
 
   bool internal_propagate ();
   void internal_reset_conflict ();
@@ -944,7 +957,8 @@ public:
 
   void add_unit_clause (int lit);
   void add_derived (int lit);
-  //========================================================================
+
+  //==== end of additional methods =========================================
 
 private:
   //==== start of state ====================================================
