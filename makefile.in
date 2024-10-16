@@ -61,10 +61,14 @@ mobical: mobical.o libcadical.a makefile $(LIBS)
 libcadical.a: $(OBJ_SOLVER) $(OBJ_CONTRIB) makefile
 	ar rc $@ $(OBJ_SOLVER) $(OBJ_CONTRIB)
 
-libcadical.so: $(OBJ_SOLVER) $(OBJ_CONTRIB) makefile
+shared: dynamic/libcadical.so
+dynamic/libcadical.so: $(OBJ_SOLVER) $(OBJ_CONTRIB) makefile
+	mkdir -p $(@D)
 	$(COMPILE) -shared -o $@ $(OBJ_SOLVER) $(OBJ_CONTRIB)
 
-cadical.dll: $(OBJ_SOLVER) $(OBJ_CONTRIB) makefile
+dll: dynamic/cadical.dll
+dynamic/cadical.dll: $(OBJ_SOLVER) $(OBJ_CONTRIB) makefile
+	mkdir -p $(@D)
 	$(COMPILE) -shared -o $@ $(OBJ_SOLVER) $(OBJ_CONTRIB) -lpsapi
 
 #--------------------------------------------------------------------------#

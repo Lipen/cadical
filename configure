@@ -541,9 +541,9 @@ update:
 format:
 	\$(MAKE) -C "\$(CADICALBUILD)" format
 shared:
-	\$(MAKE) -C "\$(CADICALBUILD)" libcadical.so
+	\$(MAKE) -C "\$(CADICALBUILD)" shared
 dll:
-	\$(MAKE) -C "\$(CADICALBUILD)" cadical.dll
+	\$(MAKE) -C "\$(CADICALBUILD)" dll
 .PHONY: all cadical clean mobical test update format shared dll
 EOF
 
