@@ -73,6 +73,7 @@ void ccadical_melt (CCaDiCaL *, int lit);
 int ccadical_simplify (CCaDiCaL *);
 void ccadical_reset_assumptions (CCaDiCaL *);
 void ccadical_reset_constraint (CCaDiCaL *);
+void ccadical_copy (CCaDiCaL *, CCaDiCaL *other);
 
 typedef bool (*ClauseCallback) (const int *clause, size_t, void *user_data);
 bool ccadical_traverse_clauses (CCaDiCaL *, bool redundant, ClauseCallback, void *user_data);

@@ -232,6 +232,10 @@ void ccadical_write_dimacs(CCaDiCaL *ptr, const char *path) {
   ((Wrapper *) ptr)->solver->write_dimacs (path);
 }
 
+void ccadical_copy (CCaDiCaL *ptr, CCaDiCaL *other) {
+  ((Wrapper *) ptr)->solver->copy (*((Wrapper *) other)->solver);
+}
+
 bool ccadical_propcheck (
   CCaDiCaL *ptr,
   const int *lits, size_t size,
