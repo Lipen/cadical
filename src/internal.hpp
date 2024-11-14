@@ -1449,6 +1449,8 @@ struct Internal {
   // Warning messages.
   //
   void warning (const char *, ...) CADICAL_ATTRIBUTE_FORMAT (2, 3);
+
+  const std::vector<unsigned> get_top_score_variables (size_t count);
 };
 
 // Fatal internal error which leads to abort.

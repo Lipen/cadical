@@ -109,6 +109,12 @@ uint64_t ccadical_propcheck_all_tree (
 
 /*------------------------------------------------------------------------*/
 
+// Extract top-score variables
+
+const int *ccadical_get_top_score_variables (CCaDiCaL *, size_t count, size_t *size);
+
+/*------------------------------------------------------------------------*/
+
 // Internal stuff
 
 bool ccadical_internal_propagate (CCaDiCaL *);

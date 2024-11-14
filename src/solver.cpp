@@ -2145,6 +2145,15 @@ uint64_t Solver::propcheck_all_tree (
     return total;
 }
 
+const std::vector<int> Solver::get_top_score_variables (size_t count) {
+    std::vector<int> result;
+    for (unsigned ivar : internal->get_top_score_variables (count)) {
+        int evar = internal->externalize(ivar);
+        result.push_back(evar);
+    }
+    return result;
+}
+
 bool Solver::internal_propagate () {
     return internal->propagate ();
 }

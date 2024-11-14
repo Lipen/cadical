@@ -52,6 +52,7 @@ struct Wrapper : Learner, Terminator {
 
   std::vector<int> propcheck_propagated;
   std::vector<int> propcheck_core;
+  std::vector<int> top_score_variables;
 };
 
 } // namespace CaDiCaL
@@ -279,6 +280,13 @@ uint64_t ccadical_propcheck_all_tree (
   Wrapper *wrapper = (Wrapper *) ptr;
   const std::vector<int> variables (lits, lits + size);
   return wrapper->solver->propcheck_all_tree (variables, limit, on_valid, user_data_valid);
+}
+
+const int *ccadical_get_top_score_variables (CCaDiCaL *ptr, size_t count, size_t *size) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  wrapper->top_score_variables = wrapper->solver->get_top_score_variables (count);
+  *size = wrapper->top_score_variables.size ();
+  return wrapper->top_score_variables.data ();
 }
 
 class ClauseCallbackIterator : public ClauseIterator {

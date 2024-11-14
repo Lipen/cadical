@@ -1062,4 +1062,16 @@ bool Internal::traverse_all_clauses (ClauseIterator &it) {
   return true;
 }
 
+const std::vector<unsigned> Internal::get_top_score_variables (size_t count) {
+  ScoreSchedule scores_copy = scores; // copy
+  std::vector<unsigned> result;
+  while (!scores_copy.empty () && result.size () < count) {
+    unsigned res = scores_copy.pop_front ();
+    if (!val (res)) {
+      result.push_back (res);
+    }
+  }
+  return result;
+}
+
 } // namespace CaDiCaL

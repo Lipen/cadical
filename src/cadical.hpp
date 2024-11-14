@@ -948,6 +948,8 @@ public:
     void *user_data_valid = nullptr
   );
 
+  const std::vector<int> get_top_score_variables (size_t count);
+
   bool internal_propagate ();
   void internal_reset_conflict ();
   int internal_level () const;

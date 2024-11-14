@@ -122,6 +122,10 @@ template <class C> class heap {
 public:
   heap (const C &c) : less (c) {}
 
+  // Default copy constructor.
+  //
+  heap(const heap& other) = default;
+
   // Number of elements in the heap.
   //
   size_t size () const { return array.size (); }
