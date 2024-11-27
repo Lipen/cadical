@@ -258,7 +258,7 @@ bool ccadical_propcheck (
   return wrapper->solver->propcheck (assumptions, restore, num_propagated, propagated, core);
 }
 
-const int *ccadical_get_propagated (CCaDiCaL *ptr, size_t *size) {
+const int *ccadical_propcheck_get_propagated (CCaDiCaL *ptr, size_t *size) {
   Wrapper *wrapper = (Wrapper *) ptr;
   *size = wrapper->propcheck_propagated.size ();
   return wrapper->propcheck_propagated.data ();
