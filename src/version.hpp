@@ -1,4 +1,5 @@
 namespace CaDiCaL {
+extern "C" {
 
 const char *version ();
 const char *copyright ();
@@ -10,4 +11,5 @@ const char *compiler ();
 const char *date ();
 const char *flags ();
 
+}
 } // namespace CaDiCaL
