@@ -73,7 +73,7 @@ void ccadical_constrain (CCaDiCaL *ptr, int lit) {
   ((Wrapper *) ptr)->solver->constrain (lit);
 }
 
-int ccadical_constraint_failed (CCaDiCaL *ptr) {
+bool ccadical_constraint_failed (CCaDiCaL *ptr) {
   return ((Wrapper *) ptr)->solver->constraint_failed ();
 }
 
