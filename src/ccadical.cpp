@@ -224,13 +224,15 @@ void ccadical_close_proof (CCaDiCaL *ptr) {
   ((Wrapper *) ptr)->solver->close_proof_trace ();
 }
 
-void ccadical_read_dimacs (CCaDiCaL *ptr, const char *path, int strict) {
+bool ccadical_read_dimacs (CCaDiCaL *ptr, const char *path, int strict) {
   int vars;
-  ((Wrapper *) ptr)->solver->read_dimacs (path, vars, strict);
+  const char *err = ((Wrapper *) ptr)->solver->read_dimacs (path, vars, strict);
+  return !err;
 }
 
-void ccadical_write_dimacs(CCaDiCaL *ptr, const char *path) {
-  ((Wrapper *) ptr)->solver->write_dimacs (path);
+bool ccadical_write_dimacs(CCaDiCaL *ptr, const char *path) {
+  const char *err = ((Wrapper *) ptr)->solver->write_dimacs (path);
+  return !err;
 }
 
 void ccadical_copy (CCaDiCaL *ptr, CCaDiCaL *other) {
