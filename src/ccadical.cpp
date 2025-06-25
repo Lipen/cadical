@@ -69,6 +69,10 @@ CCaDiCaL *ccadical_init (void) { return (CCaDiCaL *) new Wrapper (); }
 
 void ccadical_release (CCaDiCaL *ptr) { delete (Wrapper *) ptr; }
 
+bool ccadical_inconsistent (CCaDiCaL *ptr) {
+  return ((Wrapper *) ptr)->solver->inconsistent ();
+}
+
 void ccadical_constrain (CCaDiCaL *ptr, int lit) {
   ((Wrapper *) ptr)->solver->constrain (lit);
 }
