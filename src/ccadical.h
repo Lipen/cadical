@@ -32,6 +32,7 @@ void ccadical_assume (CCaDiCaL *, int lit);
 int ccadical_solve (CCaDiCaL *);
 int ccadical_val (CCaDiCaL *, int lit);
 bool ccadical_failed (CCaDiCaL *, int lit);
+bool ccadical_inconsistent (CCaDiCaL *);
 
 void ccadical_set_terminate (CCaDiCaL *, void *state,
                              int (*terminate) (void *state));
@@ -43,7 +44,6 @@ void ccadical_set_learn (CCaDiCaL *, void *state, int max_length,
 
 // Non-IPASIR conformant 'C' functions.
 
-bool ccadical_inconsistent (CCaDiCaL *);
 void ccadical_constrain (CCaDiCaL *, int lit);
 bool ccadical_constraint_failed (CCaDiCaL *);
 bool ccadical_configure (CCaDiCaL *, const char *name);
