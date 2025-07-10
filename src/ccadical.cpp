@@ -220,6 +220,17 @@ void ccadical_conclude (CCaDiCaL *ptr) {
   ((Wrapper *) ptr)->solver->conclude ();
 }
 
+int ccadical_propagate (CCaDiCaL *ptr) {
+  return ((Wrapper *) ptr)->solver->propagate ();
+}
+
+const int *ccadical_get_entrailed_literals (CCaDiCaL *ptr, size_t *size) {
+  std::vector<int> entrailed;
+  ((Wrapper *) ptr)->solver->get_entrailed_literals (entrailed);
+  *size = entrailed.size ();
+  return entrailed.data ();
+}
+
 bool ccadical_trace_proof (CCaDiCaL *ptr, const char *path) {
   return ((Wrapper *) ptr)->solver->trace_proof (path);
 }

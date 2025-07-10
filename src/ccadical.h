@@ -72,6 +72,8 @@ void ccadical_freeze (CCaDiCaL *, int lit);
 bool ccadical_frozen (CCaDiCaL *, int lit);
 void ccadical_melt (CCaDiCaL *, int lit);
 int ccadical_simplify (CCaDiCaL *);
+int ccadical_propagate (CCaDiCaL *);
+const int *ccadical_get_entrailed_literals (CCaDiCaL *, size_t *size);
 void ccadical_reset_assumptions (CCaDiCaL *);
 void ccadical_reset_constraint (CCaDiCaL *);
 void ccadical_copy (CCaDiCaL *, CCaDiCaL *other);
